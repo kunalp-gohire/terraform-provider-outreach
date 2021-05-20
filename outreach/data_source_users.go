@@ -2,6 +2,8 @@ package outreach
 
 import (
 	"context"
+	"fmt"
+
 	// "fmt"
 	// "encoding/json"
 	// "fmt"
@@ -17,49 +19,28 @@ func dataSourceContact() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"id": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeInt,
 				Required: true,
 			},
-			
-			"attributes": {
-				Type:     schema.TypeSet,
+			"email": {
+				Type:     schema.TypeString,
 				Computed: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"email": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"firstname": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"lastname": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"createdAt":{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"locked":{
-							Type:     schema.TypeBool,
-							Computed: true,
-						},
-						"username":{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"title":{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-						"updatedAt":{
-							Type:     schema.TypeString,
-							Computed: true,
-						},
-					},
-				},
+			},
+			"firstname": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"lastname": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"locked": {
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
+			"username": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 		ReadContext: dataSourceUserRead,
@@ -68,6 +49,20 @@ func dataSourceContact() *schema.Resource {
 
 func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	
+	c := m.(*Client)
+	UserId := d.Get("id")
+	uid := fmt.Sprintf("%v", UserId)
+
+	user, err := c.GetUserData(uid)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	d.Set("email", user.Data.Attributes.Email)
+	d.Set("firstname", user.Data.Attributes.FirstName)
+	d.Set("lastname", user.Data.Attributes.LastName)
+	d.Set("locked", user.Data.Attributes.Locked)
+	d.Set("username", user.Data.Attributes.UserName)
+	d.SetId(uid)
 	return diags
 }
