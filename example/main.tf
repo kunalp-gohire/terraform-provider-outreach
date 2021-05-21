@@ -17,3 +17,13 @@ data "outreach_users" "all"{
 output "users" {
   value = data.outreach_users.all
 }
+
+resource "outreach_resource_user" "user"{
+  email= "kunal.gohire@clevertap.com"
+  firstname="Kunal"
+  lastname= "Gohire"
+}
+
+output "user_instance" {
+  value = outreach_resource_user.user
+}

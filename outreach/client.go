@@ -77,3 +77,24 @@ func (c *Client) GetUserData(UserId string) (*Data, error) {
 	}
 	return &data, nil
 }
+
+func (c *Client) CreateUser(userCreateInfo Data) (*Data, error) {
+	reqb, err := json.Marshal(userCreateInfo)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", "https://api.outreach.io/api/v2/users", strings.NewReader(string(reqb)))
+	if err != nil {
+		return nil, err
+	}
+	body, err := c.doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	user := Data{}
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

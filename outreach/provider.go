@@ -41,7 +41,7 @@ func Provider() *schema.Provider {
 			},
 		},
 		// resouces block
-		ResourcesMap: map[string]*schema.Resource{},
+		ResourcesMap: map[string]*schema.Resource{"outreach_resource_user": resourceUser()},
 
 		// data block
 		DataSourcesMap:       map[string]*schema.Resource{"outreach_users": dataSourceContact()},
@@ -57,7 +57,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	auth_code := d.Get("auth_code").(string)
 	refresh_token := d.Get("refresh_token").(string)
 	acc_token := d.Get("acc_token").(string)
-	c, err := NewClient(client_id, client_secret, auth_code, refresh_token,acc_token)
+	c, err := NewClient(client_id, client_secret, auth_code, refresh_token, acc_token)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
