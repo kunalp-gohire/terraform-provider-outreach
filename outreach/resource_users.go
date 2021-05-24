@@ -11,10 +11,7 @@ import (
 func resourceUser() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"id": {
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
+			
 			"email": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -29,6 +26,10 @@ func resourceUser() *schema.Resource {
 			},
 			"locked": {
 				Type:   schema.TypeBool,
+				Optional: true,
+			},
+			"uid": {
+				Type:     schema.TypeInt,
 				Computed: true,
 			},
 			"username": {
@@ -38,8 +39,8 @@ func resourceUser() *schema.Resource {
 		},
 		CreateContext: resourceUserCreate,
 		ReadContext:   resourceUserRead,
-		// UpdateContext: resourceUserUpdate,
-		// DeleteContext: resourceUserDelete,
+		UpdateContext: resourceUserUpdate,
+		DeleteContext: resourceUserDelete,
 	}
 }
 
@@ -54,6 +55,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 				 Email: d.Get("email").(string),
 				 FirstName: d.Get("firstname").(string),
 				 LastName: d.Get("lastname").(string),
+				 Locked: d.Get("locked").(bool),
 			 },
 		},
 	}
@@ -61,14 +63,14 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	id:=user.Data.ID
+	id:=strconv.Itoa(user.Data.ID)
 	d.Set("email",user.Data.Attributes.Email)
 	d.Set("firstname",user.Data.Attributes.FirstName)
 	d.Set("lastname",user.Data.Attributes.LastName)
 	d.Set("locked",user.Data.Attributes.Locked)
     d.Set("username",user.Data.Attributes.UserName)
-	d.Set("id",user.Data.ID)
-	d.SetId(strconv.Itoa(id))
+	
+	d.SetId(id)
 	return diags
 }
 
@@ -80,6 +82,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	d.Set("uid",user.Data.ID)
 	d.Set("email",user.Data.Attributes.Email)
 	d.Set("firstname",user.Data.Attributes.FirstName)
 	d.Set("lastname",user.Data.Attributes.LastName)
@@ -89,4 +92,45 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	return diags
 }
 
+func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	c := m.(*Client)
+	
+	var diags diag.Diagnostics
+	if d.HasChange("email") {
+		
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Can't update email",
+			Detail:   "Can't update email",
+		})
 
+		return diags
+	}
+	id,err:=strconv.Atoi(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	if d.HasChange("lastname") || d.HasChange("firstname") || d.HasChange("locked"){
+		req_json := Data{
+			Data:User{
+				 Type: "user",
+				 ID: id,
+				 Attributes: Attributes{
+					 Email: d.Get("email").(string),
+					 FirstName: d.Get("firstname").(string),
+					 LastName: d.Get("lastname").(string),
+					 Locked: d.Get("locked").(bool),
+				 },
+			},
+		}
+		UserID:=d.Id()
+		d.SetId(UserID)
+		c.UpdateUser(UserID, req_json)
+	}
+	return resourceUserRead(ctx, d, m)
+}
+
+func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	d.SetId("")
+	return nil
+}
