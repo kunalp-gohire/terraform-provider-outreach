@@ -90,11 +90,11 @@ func TokenGen(client_id string, client_secret string, auth_code string, refresh_
 	// }
 
 	req_json := AuthStruct{
-		ClientID:      "UwxFB_r-MdrxJ8Q0XH3qKqn5HikGaa2ObawmKpOY9IY",
-		ClientSecrete: "aYI-SoGPPjZwwvQ4ncNna31FTar1iLTHt-iZGnpqAGU",
-		RedirectURL:   "https://clevertap.com//oauth/outreach",
-		GrantType:     "refresh_token",
-		RefreshToken:  "mgrMCv1kMW0HhUoa5k-SmA9Hg0ru6XG8uHmLect3e38",
+		ClientID:      "",
+		ClientSecrete: "",
+		RedirectURL:   "",
+		GrantType:     "",
+		RefreshToken:  "",
 	}
 	rb, _ := json.Marshal(req_json)
 	// if err != nil {
