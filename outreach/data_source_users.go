@@ -12,7 +12,7 @@ func dataSourceContact() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeInt,
-				Required: true,
+				Optional: true,
 			},
 
 			// "attributes": {
@@ -22,7 +22,7 @@ func dataSourceContact() *schema.Resource {
 			// 		Schema: map[string]*schema.Schema{
 			"email": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
 			"firstname": {
 				Type:     schema.TypeString,
@@ -63,10 +63,9 @@ func dataSourceContact() *schema.Resource {
 func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(*Client)
-	UserId := d.Get("id")
-	uid:=fmt.Sprintf("%v" ,UserId)
-
-	user, err := c.GetUserData(uid)
+	email:= d.Get("email")
+    useremail:=fmt.Sprintf("%v" ,email)
+	user, err := c.GetDataSourceUser(useremail)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -84,13 +83,15 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 	// uis[0] = ui
 	// d.Set("attributes", uis)
 
-	d.Set("email",user.Data.Attributes.Email)
-	d.Set("firstname",user.Data.Attributes.FirstName)
-	d.Set("lastname",user.Data.Attributes.LastName)
-	d.Set("locked",user.Data.Attributes.Locked)
-	d.Set("username",user.Data.Attributes.UserName)
+	d.Set("email",user.Attributes.Email)
+	d.Set("firstname",user.Attributes.FirstName)
+	d.Set("lastname",user.Attributes.LastName)
+	d.Set("locked",user.Attributes.Locked)
+	d.Set("username",user.Attributes.UserName)
+	d.Set("id",user.ID)
 	// d.Set("title",user.Data.Attributes.Title)
-	
+	UserId := user.ID
+	uid:=fmt.Sprintf("%v" ,UserId)
 	d.SetId(uid)
 	return diags
 }

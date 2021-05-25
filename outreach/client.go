@@ -5,7 +5,7 @@ import (
 	"fmt"
 	// "go/token"
 	"io/ioutil"
-	// "log"
+	"log"
 	"net/http"
 	"os"
 	// "strconv"
@@ -50,12 +50,17 @@ func NewClient(client_id string, client_secret string, auth_code string, refresh
 	// fmt.Println("enterd init")
 	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2", nil)
 	if err != nil {
+		log.Println("[Token Error]: ",err )
 		return nil, err
 	}
 	client := &http.Client{Timeout: 10 * time.Second}
 	req.Header.Add("Authorization", "Bearer "+Token)
 	req.Header.Add("content-type", "application/vnd.api+json")
-	re, _ := client.Do(req)
+	re, err := client.Do(req)
+	if err != nil {
+		log.Println("[Token Error]: ",err )
+		return nil, err
+	}
 	if re.StatusCode != 200 {
 		fmt.Println("enterd for new tok")
 		tok, _ := TokenGen(client_id, client_secret, auth_code, refresh_token, acc_token)
@@ -72,7 +77,7 @@ func NewClient(client_id string, client_secret string, auth_code string, refresh
 }
 
 func TokenGen(client_id string, client_secret string, auth_code string, refresh_token string, acc_token string) ([]byte, error) {
-	
+	// redirect_uri := "https://clevertap.com//oauth/outreach"
 	// if (client_id != "") && (client_secret != "") && (redirect_uri != "") {
 	// }
 	// grant_type := "refresh_token"
@@ -85,11 +90,11 @@ func TokenGen(client_id string, client_secret string, auth_code string, refresh_
 	// }
 
 	req_json := AuthStruct{
-		ClientID:      "",
-		ClientSecrete: "",
-		RedirectURL:   "",
+		ClientID:      "UwxFB_r-MdrxJ8Q0XH3qKqn5HikGaa2ObawmKpOY9IY",
+		ClientSecrete: "aYI-SoGPPjZwwvQ4ncNna31FTar1iLTHt-iZGnpqAGU",
+		RedirectURL:   "https://clevertap.com//oauth/outreach",
 		GrantType:     "refresh_token",
-		RefreshToken:  "",
+		RefreshToken:  "mgrMCv1kMW0HhUoa5k-SmA9Hg0ru6XG8uHmLect3e38",
 	}
 	rb, _ := json.Marshal(req_json)
 	// if err != nil {
@@ -106,6 +111,7 @@ func TokenGen(client_id string, client_secret string, auth_code string, refresh_
 	res, err := client.Do(req)
 	// res,err:=c.HTTPClient.Do(req)
 	if err != nil {
+		log.Println("[Token Error]: ",err )
 		return nil, fmt.Errorf("%v", err)
 	}
 	defer res.Body.Close()
@@ -142,12 +148,14 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
+		log.Println("[Do req Error]: ",err )
 		return nil, err
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
+		log.Println("[Do req Error]: ",err )
 		return nil, err
 	}
 
@@ -157,20 +165,56 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 	return body, err
 }
 
-func (c *Client) GetUserData(UserId string) (*Data, error) {
-	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2/users/"+UserId, nil)
-
-	if err != nil {
+func (c *Client) GetDataSourceUser(email string) (*User, error) {
+	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2/users", nil)
+    if err != nil {
+		log.Println("[GetUser Error]: ",err )
 		return nil, err
 	}
 
 	r, err := c.doRequest(req)
 	if err != nil {
+		log.Println("[GetUser Error]: ",err )
+		return nil, err
+	}
+	userlist:= ListUser{}
+    err = json.Unmarshal(r, &userlist)
+	if err != nil {
+		log.Println("[GetUser Error]: ",err )
+		return nil, err
+	}
+	var data *User
+	userList:=userlist.List
+	for _,cont:= range userList{
+          if(cont.Attributes.Email== email){
+			  data = &cont
+			  break
+		  }
+	}
+	if(data==nil){
+		return nil,fmt.Errorf("User with email %s not found",email)
+	}
+	return data,nil
+}
+
+
+func (c *Client) GetUserData(UserId string) (*Data, error) {
+	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2/users/"+UserId, nil)
+
+	if err != nil {
+		log.Println("[GetUser Error]: ",err )
+		return nil, err
+	}
+
+	r, err := c.doRequest(req)
+	if err != nil {
+		log.Println("[GetUser Error]: ",err )
 		return nil, err
 	}
 	data := Data{}
 	err = json.Unmarshal(r, &data)
 	if err != nil {
+		log.Println("[GetUser Error]: ",err )
 		return nil, err
 	}
 	return &data, nil
@@ -178,19 +222,23 @@ func (c *Client) GetUserData(UserId string) (*Data, error) {
 func (c *Client) CreateUser(userCreateInfo Data) (*Data, error) {
 	reqb, err := json.Marshal(userCreateInfo)
 	if err != nil {
+		log.Println("[CreateUser Error]: ",err )
 		return nil, err
 	}
 	req, err := http.NewRequest("POST", "https://api.outreach.io/api/v2/users", strings.NewReader(string(reqb)))
 	if err != nil {
+		log.Println("[CreateUser Error]: ",err )
 		return nil, err
 	}
 	body, err := c.doRequest(req)
 	if err != nil {
+		log.Println("[CreateUser Error]: ",err )
 		return nil, err
 	}
 	user := Data{}
 	err = json.Unmarshal(body, &user)
 	if err != nil {
+		log.Println("[CreateUser Error]: ",err )
 		return nil, err
 	}
 	return &user, nil
@@ -199,6 +247,7 @@ func (c *Client) CreateUser(userCreateInfo Data) (*Data, error) {
 func (c *Client) UpdateUser(UserId string, userUpdateInfo Data) (*Data, error) {
 	reqb, err := json.Marshal(userUpdateInfo)
 	if err != nil {
+		log.Println("[UpdateUser Error]: ",err )
 		return nil, err
 	}
 
@@ -206,17 +255,20 @@ func (c *Client) UpdateUser(UserId string, userUpdateInfo Data) (*Data, error) {
 
 	req, err := http.NewRequest("PATCH", URL, strings.NewReader(string(reqb)))
 	if err != nil {
+		log.Println("[UpdateUser Error]: ",err )
 		return nil, err
 	}
 
 	body, err := c.doRequest(req)
 	if err != nil {
+		log.Println("[UpdateUser Error]: ",err )
 		return nil, err
 	}
 
 	user := Data{}
 	err = json.Unmarshal(body, &user)
 	if err != nil {
+		log.Println("[UpdateUser Error]: ",err )
 		return nil, err
 	}
 

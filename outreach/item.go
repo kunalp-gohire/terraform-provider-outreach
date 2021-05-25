@@ -4,6 +4,10 @@ type Data struct{
 	Data User `json:"data"`
 }
 
+type ListUser struct{
+	List []User `json:"data"`
+}
+
 type User struct {
 	Type string `json:"type"`
 	ID int `json:"id,omitempty"`
