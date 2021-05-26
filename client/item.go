@@ -1,4 +1,4 @@
-package outreach
+package client
 
 type Data struct{
 	Data User `json:"data"`

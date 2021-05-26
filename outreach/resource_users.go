@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 	// "fmt"
+	"terraform-provider-outreach/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -48,13 +49,13 @@ func resourceUser() *schema.Resource {
 }
 
 func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*Client)
+	c := m.(*client.Client)
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
-	req_json := Data{
-		Data:User{
+	req_json := client.Data{
+		Data:client.User{
              Type: "user",
-			 Attributes: Attributes{
+			 Attributes: client.Attributes{
 				 Email: d.Get("email").(string),
 				 FirstName: d.Get("firstname").(string),
 				 LastName: d.Get("lastname").(string),
@@ -79,7 +80,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-	c := m.(*Client)
+	c := m.(*client.Client)
 	id:=d.Id()
 	user, err := c.GetUserData(id)
 	if err != nil {
@@ -96,7 +97,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 }
 
 func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*Client)
+	c := m.(*client.Client)
 	
 	var diags diag.Diagnostics
 	if d.HasChange("email") {
@@ -114,11 +115,11 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		return diag.FromErr(err)
 	}
 	if d.HasChange("lastname") || d.HasChange("firstname") || d.HasChange("locked"){
-		req_json := Data{
-			Data:User{
+		req_json := client.Data{
+			Data:client.User{
 				 Type: "user",
 				 ID: id,
-				 Attributes: Attributes{
+				 Attributes: client.Attributes{
 					 Email: d.Get("email").(string),
 					 FirstName: d.Get("firstname").(string),
 					 LastName: d.Get("lastname").(string),

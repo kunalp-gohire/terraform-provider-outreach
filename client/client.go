@@ -1,4 +1,4 @@
-package outreach
+package client
 
 import (
 	"encoding/json"
@@ -10,7 +10,6 @@ import (
 	"os"
 	// "strconv"
 	"strings"
-
 	// "strings"
 	"time"
 )
@@ -90,11 +89,11 @@ func TokenGen(client_id string, client_secret string, auth_code string, refresh_
 	// }
 
 	req_json := AuthStruct{
-		ClientID:      "",
-		ClientSecrete: "",
-		RedirectURL:   "",
-		GrantType:     "",
-		RefreshToken:  "",
+		ClientID:      "UwxFB_r-MdrxJ8Q0XH3qKqn5HikGaa2ObawmKpOY9IY",
+		ClientSecrete: "aYI-SoGPPjZwwvQ4ncNna31FTar1iLTHt-iZGnpqAGU",
+		RedirectURL:   "https://clevertap.com//oauth/outreach",
+		GrantType:     "refresh_token",
+		RefreshToken:  "mgrMCv1kMW0HhUoa5k-SmA9Hg0ru6XG8uHmLect3e38",
 	}
 	rb, _ := json.Marshal(req_json)
 	// if err != nil {
@@ -177,7 +176,7 @@ func (c *Client) GetDataSourceUser(email string) (*User, error) {
 		log.Println("[GetUser Error]: ",err )
 		return nil, err
 	}
-	userlist:= ListUser{}
+	userlist:=ListUser{}
     err = json.Unmarshal(r, &userlist)
 	if err != nil {
 		log.Println("[GetUser Error]: ",err )
@@ -192,7 +191,7 @@ func (c *Client) GetDataSourceUser(email string) (*User, error) {
 		  }
 	}
 	if(data==nil){
-		return nil,fmt.Errorf("User with email %s not found",email)
+		return nil,fmt.Errorf("user with email %s not found",email)
 	}
 	return data,nil
 }

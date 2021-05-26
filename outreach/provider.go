@@ -4,7 +4,7 @@ import (
 	"context"
 
 	// "os"
-
+    "terraform-provider-outreach/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -59,7 +59,8 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	auth_code := d.Get("auth_code").(string)
 	refresh_token := d.Get("refresh_token").(string)
 	acc_token := d.Get("acc_token").(string)
-	c, err := NewClient(client_id, client_secret, auth_code, refresh_token,acc_token)
+	
+	c, err := client.NewClient(client_id, client_secret, auth_code, refresh_token,acc_token)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,

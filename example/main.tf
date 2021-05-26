@@ -12,7 +12,7 @@ provider "outreach" {
 }
 
 data "outreach_users" "user1"{
-   id=2
+   email="kpgkunalgohire12@gmail.com"
 }
 
 output "users" {
