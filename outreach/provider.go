@@ -24,11 +24,6 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("outreach_client_secrete", nil),
 			},
-			"auth_code": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("outreach_code", nil),
-			},
 			"refresh_token": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -56,16 +51,15 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	var diags diag.Diagnostics
 	client_id := d.Get("client_id").(string)
 	client_secret := d.Get("client_secret").(string)
-	auth_code := d.Get("auth_code").(string)
 	refresh_token := d.Get("refresh_token").(string)
 	acc_token := d.Get("acc_token").(string)
 	
-	c, err := client.NewClient(client_id, client_secret, auth_code, refresh_token,acc_token)
+	c, err := client.NewClient(client_id, client_secret, refresh_token,acc_token)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "Unable to create HashiCups client",
-			Detail:   "Unable to authenticate user for authenticated HashiCups client",
+			Summary:  "Unable to create Outreach client",
+			Detail:   "Unable to authenticate user for authenticated Outreach client",
 		})
 
 		return nil, diags

@@ -3,7 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	// "go/token"
+	
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -22,31 +22,26 @@ type Client struct {
 	AccessToken string
 }
 
-type AuthStruct struct {
-	ClientID      string `json:"client_id"`
-	ClientSecrete string `json:"client_secret"`
-	RedirectURL   string `json:"redirect_uri"`
-	GrantType     string `json:"grant_type"`
-	RefreshToken  string `json:"refresh_token"`
-}
-type AuthResp struct {
-	AccToken     string `json:"access_token"`
-	Token_Type   string `json:"token_type"`
-	Expires      int    `json:"expires_in"`
-	RefreshToken string `json:"refresh_token"`
-	Scope        string `json:"scope"`
+var (
+    Errors = make(map[int]string)
+)
+
+func init() {
+	Errors[400] = "Bad Request, StatusCode = 400"
+	Errors[404] = "User Does Not Exist , StatusCode = 404"
+	Errors[409] = "User Already Exist, StatusCode = 409"
+	Errors[401] = "Unautharized Access, StatusCode = 401"
+	Errors[429] = "User Has Sent Too Many Request, StatusCode = 429"
+	Errors[422] = "Email has already been taken, StatusCode = 422"
 }
 
-// var acc string
 
-func NewClient(client_id string, client_secret string, auth_code string, refresh_token string, acc_token string) (*Client, error) {
+func NewClient(client_id string, client_secret string,  refresh_token string, acc_token string) (*Client, error) {
 	c := Client{
 		HTTPClient: &http.Client{Timeout: 10 * time.Second},
 		HostUrl:    HostURL,
 	}
 	Token := os.Getenv("acc_token")
-    // fmt.Println(Token)
-	// fmt.Println("enterd init")
 	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2", nil)
 	if err != nil {
 		log.Println("[Token Error]: ",err )
@@ -62,7 +57,7 @@ func NewClient(client_id string, client_secret string, auth_code string, refresh
 	}
 	if re.StatusCode != 200 {
 		fmt.Println("enterd for new tok")
-		tok, _ := TokenGen(client_id, client_secret, auth_code, refresh_token, acc_token)
+		tok, _ := TokenGen(client_id, client_secret,  refresh_token, acc_token)
 		ar := AuthResp{}
 		json.Unmarshal(tok, &ar)
 		os.Setenv("acc_token", ar.AccToken)
@@ -70,71 +65,41 @@ func NewClient(client_id string, client_secret string, auth_code string, refresh
 	}
 
 	c.AccessToken = "Bearer " + Token
-
-	// c.AccessToken = acc_token
 	return &c, nil
 }
 
-func TokenGen(client_id string, client_secret string, auth_code string, refresh_token string, acc_token string) ([]byte, error) {
-	// redirect_uri := "https://clevertap.com//oauth/outreach"
-	// if (client_id != "") && (client_secret != "") && (redirect_uri != "") {
-	// }
-	// grant_type := "refresh_token"
-	// req_json:=AuthStruct{
-	// 	ClientID:      client_id,
-	// 	ClientSecrete: client_secret,
-	// 	RedirectURL:   redirect_uri,
-	// 	GrantType:     grant_type,
-	// 	RefreshToken:  refresh_token,
-	// }
-
-	req_json := AuthStruct{
-		ClientID:      "",
-		ClientSecrete: "",
-		RedirectURL:   "",
-		GrantType:     "",
-		RefreshToken:  "",
+func TokenGen(client_id string, client_secret string,  refresh_token string, acc_token string) ([]byte, error) {
+	req_json:=AuthStruct{
+		ClientID:      client_id,
+		ClientSecrete: client_secret,
+		RedirectURL:   "https://clevertap.com//oauth/outreach",
+		GrantType:     "refresh_token",
+		RefreshToken:  refresh_token,
 	}
-	rb, _ := json.Marshal(req_json)
-	// if err != nil {
-	// 	return "",fmt.Errorf("%v",err)
-	// }
 
-	req, _ := http.NewRequest("POST", "https://api.outreach.io/oauth/token", strings.NewReader(string(rb)))
-	// time.Sleep(10 * time.Second)
-	// if err != nil {
-	// 	return "", fmt.Errorf("%v",err)
-	// }
+	
+	rb, _ := json.Marshal(req_json)
+
+	req, err := http.NewRequest("POST", "https://api.outreach.io/oauth/token", strings.NewReader(string(rb)))
+	if err != nil {
+		return nil, fmt.Errorf("%v",err)
+	}
 	req.Header.Add("content-type", "application/json")
 	client := &http.Client{Timeout: 10 * time.Second}
 	res, err := client.Do(req)
-	// res,err:=c.HTTPClient.Do(req)
 	if err != nil {
 		log.Println("[Token Error]: ",err )
 		return nil, fmt.Errorf("%v", err)
 	}
 	defer res.Body.Close()
-	// log.Println(res.StatusCode)
-	body, _ := ioutil.ReadAll(res.Body)
-	// if err != nil {
-	// 	return "", fmt.Errorf("%v",err)
-	// }
-
-	// ar := AuthResp{}
-	//  json.Unmarshal(body, &ar)
-	// if err != nil {
-	// 	return "",fmt.Errorf("%v",err)
-	// }
-	// if res.StatusCode != 200 {
-	// 	return nil, fmt.Errorf("status: %d, body: %s  %s token", res.StatusCode, body, ar.AccToken)
-	// }
-	// if res.StatusCode == 200 {
-	// 	return nil, fmt.Errorf("status: %d, body: %s  %s token", res.StatusCode, body, ar.AccToken)
-	// }
-	// log.Println(ar.AccToken)
-	// token := ar.AccToken
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Println("[Token Error]: ",err)
+		return nil, fmt.Errorf("%v",err)
+	}
 	temp := os.Getenv("acc_token")
 	if res.StatusCode != 200 {
+		log.Println("[Token Error]: ",Errors[res.StatusCode])
 		return nil, fmt.Errorf("status: %d, body: %s %s tok", res.StatusCode, body, temp)
 	}
 
@@ -159,6 +124,7 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 	}
 
 	if res.StatusCode == 400 || res.StatusCode == 401 || res.StatusCode == 429 ||res.StatusCode == 422 ||res.StatusCode == 404{
+		log.Println("[Do req Error]: ",Errors[res.StatusCode])
 		return nil, fmt.Errorf("status of doreq: %d, body: %s  ", res.StatusCode, body)
 	}
 	return body, err
@@ -250,9 +216,9 @@ func (c *Client) UpdateUser(UserId string, userUpdateInfo Data) (*Data, error) {
 		return nil, err
 	}
 
-	URL := "https://api.outreach.io/api/v2/users/" + UserId
+	
 
-	req, err := http.NewRequest("PATCH", URL, strings.NewReader(string(reqb)))
+	req, err := http.NewRequest("PATCH","https://api.outreach.io/api/v2/users/" + UserId, strings.NewReader(string(reqb)))
 	if err != nil {
 		log.Println("[UpdateUser Error]: ",err )
 		return nil, err
