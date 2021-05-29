@@ -15,7 +15,7 @@ data "outreach_users" "user1"{
    email="kpgkunalgohire12@gmail.com"
 }
 
-output "users" {
+output "user_data" {
   value = data.outreach_users.user1
 }
 
@@ -25,17 +25,21 @@ resource "outreach_resource_user" "user"{
   lastname= "Test11"
   locked= true
 }
+
+output "user_instance" {
+  value = outreach_resource_user.user
+}
+
 resource "outreach_resource_user" "user1"{
   email= "kpgkunalgohire123@gmail.com"
   firstname="User123"
   lastname= "Test123"
   locked= true
 }
+
 output "user_instance1" {
   value = outreach_resource_user.user1
 }
 
 
-output "user_instance" {
-  value = outreach_resource_user.user
-}
+

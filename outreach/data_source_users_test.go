@@ -28,9 +28,9 @@ func TestAccUserDataSource_basic(t *testing.T) {
 		},
 	})
 }
+
 func testAccCheckUserDataExists(resource string) resource.TestCheckFunc {
 	return func(state *terraform.State) error {
-        
 		rs, ok := state.RootModule().Resources[resource]
 		if !ok {
 			return fmt.Errorf("Not found: %s", resource)
@@ -43,7 +43,6 @@ func testAccCheckUserDataExists(resource string) resource.TestCheckFunc {
 }
 
 func testAccUserDataSourceConfig() string {
-	fmt.Println("create data block")
 	return fmt.Sprintf(`
 data "outreach_users" "test" {
 	   email     = "kpgkunalgohire123@gmail.com"

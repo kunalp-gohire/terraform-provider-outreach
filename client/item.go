@@ -13,15 +13,13 @@ type User struct {
 	ID int `json:"id,omitempty"`
     Attributes Attributes `json:"attributes"`
 }
+
 type Attributes struct{
     Email string `json:"email"`
 	FirstName string `json:"firstName,omitempty"`
 	LastName string `json:"lastName,omitempty"`
-	// CreateAt string `json:"createdAt,omitempty"`
 	Locked bool `json:"locked"`
 	UserName string `json:"username,omitempty"`
-	// Title string `json:"title,omitempty"`
-	// UpdatedAt string `json:"updatedAt,omitempty"`
 }
 
 type AuthStruct struct {
@@ -31,6 +29,7 @@ type AuthStruct struct {
 	GrantType     string `json:"grant_type"`
 	RefreshToken  string `json:"refresh_token"`
 }
+
 type AuthResp struct {
 	AccToken     string `json:"access_token"`
 	Token_Type   string `json:"token_type"`

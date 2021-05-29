@@ -8,7 +8,7 @@ import (
 	"terraform-provider-outreach/client"
 )
 
-func dataSourceContact() *schema.Resource {
+func dataSourceUsers() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"id": {
@@ -27,7 +27,6 @@ func dataSourceContact() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
 			"locked": {
 				Type:     schema.TypeBool,
 				Computed: true,
@@ -50,7 +49,6 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 	if err != nil {
 		return diag.FromErr(err)
 	}
-
 	d.Set("email", user.Attributes.Email)
 	d.Set("firstname", user.Attributes.FirstName)
 	d.Set("lastname", user.Attributes.LastName)
