@@ -115,36 +115,44 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 	return body, err
 }
 
-func (c *Client) GetDataSourceUser(email string) (*User, error) {
-	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2/users", nil)
-    if err != nil {
-		log.Println("[GetUser Error]: ",err )
-		return nil, err
-	}
-	body, err := c.doRequest(req)
-	if err != nil {
-		log.Println("[GetUser Error]: ",err )
-		return nil, err
-	}
-	userlist:=ListUser{}
-    err = json.Unmarshal(body, &userlist)
-	if err != nil {
-		log.Println("[GetUser Error]: ",err )
-		return nil, err
-	}
-	var data *User
-	userList:=userlist.List
-	for _,cont:= range userList{
-          if(cont.Attributes.Email== email){
-			  data = &cont
-			  break
-		  }
-	}
-	if(data==nil){
-		return nil,fmt.Errorf("user with email %s not found",email)
-	}
-	return data,nil
-}
+/*
+   User ID is requires to fetch the Outreach user. GetDataSourceUser() function defined to fetch user 
+   and import the user using email ID.The function fetch the all outreach users of organization and 
+   extract the user with given email id    
+*/
+// func (c *Client) GetDataSourceUser(email string) (*User, error) {
+// 	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2/users", nil)
+//     if err != nil {
+// 		log.Println("[GetUser Error]: ",err )
+// 		return nil, err
+// 	}
+// 	body, err := c.doRequest(req)
+// 	if err != nil {
+// 		log.Println("[GetUser Error]: ",err )
+// 		return nil, err
+// 	}
+// 	userlist:=ListUser{}
+//     err = json.Unmarshal(body, &userlist)
+// 	if err != nil {
+// 		log.Println("[GetUser Error]: ",err )
+// 		return nil, err
+// 	}
+// 	var data *User
+// 	userList:=userlist.List
+// 	for _,cont:= range userList{
+//           if(cont.Attributes.Email== email){
+// 			  data = &cont
+// 			  break
+// 		  }
+// 	}
+// 	file, _ := json.MarshalIndent(userList, "", " ")
+// 	_ = ioutil.WriteFile("C:/Users/Kunal/Desktop/Outreach_Provider/client/test.json", file, 0644)
+// 	if(data==nil){
+// 		return nil,fmt.Errorf("user with email %s not found",email)
+// 	}
+
+// 	return data,nil
+// }
 
 func (c *Client) GetUserData(UserId string) (*Data, error) {
 	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2/users/"+UserId, nil)

@@ -48,7 +48,7 @@ func testAccCheckUserDataExists(resource string) resource.TestCheckFunc {
 func testAccUserDataSourceConfig() string {
 	return fmt.Sprintf(`
 data "outreach_users" "test" {
-	   email     = "kpgkunalgohire123@gmail.com"
+	id = 5
 }
 `)
 }

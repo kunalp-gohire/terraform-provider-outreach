@@ -12,14 +12,14 @@ provider "outreach" {
 }
 
 resource "outreach_resource_user" "import" {
-   email= "kpgkunalgohire@gmail.com"
-            firstname="User11"
-            
-            lastname= "Test11"
-            locked= true
-            phonenumber= ""
-            title= "Test"
+  email       = "kpgkunalgohire@gmail.com"
+  firstname   = "User11111"          
+  lastname    = "Test11"
+  locked      = true
+  phonenumber = ""
+  title       = "Test"
 }
+
 
 output "user_import" {
   value = outreach_resource_user.import

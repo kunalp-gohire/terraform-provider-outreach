@@ -12,7 +12,7 @@ provider "outreach" {
 }
 
 data "outreach_users" "user1"{
-   email="kpgkunalgohire12@gmail.com"
+   id= 9
 }
 
 output "user_data" {
@@ -20,12 +20,12 @@ output "user_data" {
 }
 
 resource "outreach_resource_user" "user"{
-  email= "kpgkunalgohire@gmail.com"
-  firstname="User11"
-  lastname= "Test11"
-  locked= true
-  phonenumber= ""
-  title="Test"
+  email       = "kpgkunalgohire@gmail.com"
+  firstname   = "User11"
+  lastname    = "Test11"
+  locked      = true
+  phonenumber = ""
+  title       = "Test"
 }
 
 output "user_instance" {
@@ -33,12 +33,37 @@ output "user_instance" {
 }
 
 resource "outreach_resource_user" "user1"{
-  email= "kpgkunalgohire123@gmail.com"
-  firstname="User123"
-  lastname= "Test123"
-  locked= true
-  phonenumber= ""
-  title="Test"
+  email       = "kpgkunalgohire123@gmail.com"
+  firstname   = "User123"
+  lastname    = "Test123"
+  locked      = true
+  phonenumber = ""
+  title       = "Test"
+}
+
+resource "outreach_resource_user" "user2"{
+  email     = "kpgkunalgohire12345@gmail.com"
+  firstname = "Astha"
+  lastname  = "Test12345"
+  locked    = false
+  # phonenumber= ""
+  # title="Test"
+}
+resource "outreach_resource_user" "user3"{
+  email     = "ashwini.gaddagi@clevertap.com"
+  firstname = "Ashwini"
+  lastname  = "Test12345"
+  locked    = false
+  # phonenumber= ""
+  # title="Test"
+}
+
+output "user_instance2" {
+  value = outreach_resource_user.user2
+}
+
+output "user_instance3" {
+  value = outreach_resource_user.user3
 }
 
 output "user_instance1" {
