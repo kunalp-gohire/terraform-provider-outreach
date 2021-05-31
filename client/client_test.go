@@ -27,6 +27,8 @@ func TestClient_GetUserData(t *testing.T) {
 						LastName:  "Test11",
 						Locked:    true,
 						UserName: "Test_User",
+						PhoneNumber: "",
+						Title: "Test",
 					},
 				},
 			},
@@ -69,6 +71,8 @@ func TestClient_CreateUser(t *testing.T) {
 						FirstName: "User1",
 						LastName:  "Test1",
 						Locked:    false,
+						PhoneNumber: "",
+						Title: "Test",
 					},
 				},
 			},
@@ -82,6 +86,8 @@ func TestClient_CreateUser(t *testing.T) {
 						LastName:  "Test1",
 						Locked:    false,
 						UserName: "Test_User",
+						PhoneNumber: "",
+						Title: "Test",
 					},
 				},
 			},
@@ -97,6 +103,8 @@ func TestClient_CreateUser(t *testing.T) {
 						FirstName: "User1",
 						LastName:  "Test1",
 						Locked:    false,
+						PhoneNumber: "",
+						Title: "Test",
 					},
 				},
 			},
@@ -109,6 +117,8 @@ func TestClient_CreateUser(t *testing.T) {
 						FirstName: "User1",
 						LastName:  "Test1",
 						Locked:    false,
+						PhoneNumber: "",
+						Title: "Test",
 					},
 				},
 			},
@@ -149,6 +159,8 @@ func TestClient_UpdateUser(t *testing.T) {
 						LastName:  "Test11",
 						Locked:    true,
 						UserName: "Test_User",
+						PhoneNumber: "",
+						Title: "Test",
 					},
 				},
 			},
@@ -162,6 +174,8 @@ func TestClient_UpdateUser(t *testing.T) {
 						LastName:  "Test11",
 						Locked:    true,
 						UserName: "Test_User",
+						PhoneNumber: "",
+						Title: "Test",
 					},
 				},
 			},
@@ -180,6 +194,8 @@ func TestClient_UpdateUser(t *testing.T) {
 						FirstName: "User1",
 						LastName:  "Test1",
 						Locked:    true,
+						PhoneNumber: "",
+						Title: "Test",
 					},
 				},
 			},
@@ -189,8 +205,6 @@ func TestClient_UpdateUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.testName, func(t *testing.T) {
-
-			
 			client, _ := NewClient(os.Getenv("outreach_client_id"), os.Getenv("outreach_client_secrete"),  os.Getenv("outreach_refresh_token"), os.Getenv("acc_token"))
 			_, err := client.UpdateUser(tc.userID, tc.updatedUser)
 			if tc.expectErr {

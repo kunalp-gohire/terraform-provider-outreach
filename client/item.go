@@ -20,6 +20,8 @@ type Attributes struct{
 	LastName string `json:"lastName,omitempty"`
 	Locked bool `json:"locked"`
 	UserName string `json:"username,omitempty"`
+	PhoneNumber string `json:"phoneNumber,omitempty"`
+	Title string `json:"title,omitempty"`
 }
 
 type AuthStruct struct {

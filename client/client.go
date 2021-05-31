@@ -146,7 +146,6 @@ func (c *Client) GetDataSourceUser(email string) (*User, error) {
 	return data,nil
 }
 
-
 func (c *Client) GetUserData(UserId string) (*Data, error) {
 	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2/users/"+UserId, nil)
 	if err != nil {

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"terraform-provider-outreach/client"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -29,6 +28,14 @@ func resourceUser() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
+			"phonenumber": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"title": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"uid": {
 				Type:     schema.TypeInt,
 				Computed: true,
@@ -48,13 +55,15 @@ func resourceUser() *schema.Resource {
 				c := m.(*client.Client)
 				user, err := c.GetDataSourceUser(email)
 				if err != nil {
-					 return nil, fmt.Errorf("%v ",err)
+					return nil, fmt.Errorf("%v ", err)
 				}
 				d.Set("email", user.Attributes.Email)
 				d.Set("firstname", user.Attributes.FirstName)
 				d.Set("lastname", user.Attributes.LastName)
 				d.Set("locked", user.Attributes.Locked)
 				d.Set("username", user.Attributes.UserName)
+				d.Set("title", user.Attributes.Title)
+				d.Set("phonenumber", user.Attributes.PhoneNumber)
 				d.Set("id", user.ID)
 				UserId := user.ID
 				uid := fmt.Sprintf("%v", UserId)
@@ -72,10 +81,12 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 		Data: client.User{
 			Type: "user",
 			Attributes: client.Attributes{
-				Email:     d.Get("email").(string),
-				FirstName: d.Get("firstname").(string),
-				LastName:  d.Get("lastname").(string),
-				Locked:    d.Get("locked").(bool),
+				Email:       d.Get("email").(string),
+				FirstName:   d.Get("firstname").(string),
+				LastName:    d.Get("lastname").(string),
+				Locked:      d.Get("locked").(bool),
+				PhoneNumber: d.Get("phonenumber").(string),
+				Title:       d.Get("title").(string),
 			},
 		},
 	}
@@ -89,6 +100,8 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 	d.Set("lastname", user.Data.Attributes.LastName)
 	d.Set("locked", user.Data.Attributes.Locked)
 	d.Set("username", user.Data.Attributes.UserName)
+	d.Set("title", user.Data.Attributes.Title)
+	d.Set("phonenumber", user.Data.Attributes.PhoneNumber)
 	d.SetId(id)
 	return diags
 }
@@ -107,6 +120,8 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	d.Set("lastname", user.Data.Attributes.LastName)
 	d.Set("locked", user.Data.Attributes.Locked)
 	d.Set("username", user.Data.Attributes.UserName)
+	d.Set("title", user.Data.Attributes.Title)
+	d.Set("phonenumber", user.Data.Attributes.PhoneNumber)
 	d.SetId(strconv.Itoa(user.Data.ID))
 	return diags
 }
@@ -126,16 +141,18 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if d.HasChange("lastname") || d.HasChange("firstname") || d.HasChange("locked") {
+	if d.HasChange("lastname") || d.HasChange("firstname") || d.HasChange("locked") || d.HasChange("phonenumber") || d.HasChange("title"){
 		req_json := client.Data{
 			Data: client.User{
 				Type: "user",
 				ID:   id,
 				Attributes: client.Attributes{
-					Email:     d.Get("email").(string),
-					FirstName: d.Get("firstname").(string),
-					LastName:  d.Get("lastname").(string),
-					Locked:    d.Get("locked").(bool),
+					Email:       d.Get("email").(string),
+					FirstName:   d.Get("firstname").(string),
+					LastName:    d.Get("lastname").(string),
+					Locked:      d.Get("locked").(bool),
+					PhoneNumber: d.Get("phonenumber").(string),
+					Title:       d.Get("title").(string),
 				},
 			},
 		}

@@ -24,6 +24,8 @@ resource "outreach_resource_user" "user"{
   firstname="User11"
   lastname= "Test11"
   locked= true
+  phonenumber= ""
+  title="Test"
 }
 
 output "user_instance" {
@@ -35,6 +37,8 @@ resource "outreach_resource_user" "user1"{
   firstname="User123"
   lastname= "Test123"
   locked= true
+  phonenumber= ""
+  title="Test"
 }
 
 output "user_instance1" {

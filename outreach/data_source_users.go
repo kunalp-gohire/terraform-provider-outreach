@@ -35,6 +35,14 @@ func dataSourceUsers() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"phonenumber": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"title": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 		ReadContext: dataSourceUserRead,
 	}
@@ -55,6 +63,8 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, m interface
 	d.Set("locked", user.Attributes.Locked)
 	d.Set("username", user.Attributes.UserName)
 	d.Set("id", user.ID)
+	d.Set("phonenumber",user.Attributes.PhoneNumber)
+	d.Set("title",user.Attributes.Title)
 	UserId := user.ID
 	uid := fmt.Sprintf("%v", UserId)
 	d.SetId(uid)

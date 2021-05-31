@@ -27,7 +27,7 @@ func TestAccUser_Basic(t *testing.T) {
 func testAccCheckUserBasic() string {
 	return fmt.Sprintf(`
 resource "outreach_resource_user" "user1" {
-	email= "asthayuno45@gmail.com"
+  email= "asthayuno45@gmail.com"
   firstname="Test"
   lastname= "User"
   locked= true
@@ -74,8 +74,7 @@ resource "outreach_resource_user" "user2" {
   email= "kpgkunalgohire22@gmail.com"
   firstname="UserU"
   lastname= "TestU"
-  locked= true
-	
+  locked= true	
 }
 `)
 }
