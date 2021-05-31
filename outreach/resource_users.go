@@ -51,6 +51,10 @@ func resourceUser() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		/*
+		Below custom import function is implemented to import user using email id instead of
+		user ID. 
+		*/
 		// Importer: &schema.ResourceImporter{
 		// 	State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
 		// 		email := d.Id()
