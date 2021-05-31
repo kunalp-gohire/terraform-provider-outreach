@@ -2,10 +2,9 @@ package outreach
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"testing"
-	
 )
 
 func TestAccUserDataSource_basic(t *testing.T) {
@@ -23,6 +22,10 @@ func TestAccUserDataSource_basic(t *testing.T) {
 						"data.outreach_users.test", "firstname", "User123"),
 					resource.TestCheckResourceAttr(
 						"data.outreach_users.test", "lastname", "Test123"),
+					resource.TestCheckResourceAttr(
+						"data.outreach_users.test", "locked", "true"),
+					resource.TestCheckResourceAttr(
+						"data.outreach_users.test", "username", "User123_Test123"),
 				),
 			},
 		},
