@@ -10,13 +10,6 @@ This terraform provider allows to perform Create ,Read ,Update, Import and Lock 
 * [Outreach API Access](https://www.outreach.io/product/platform/api)
 * Outreach Admin Account (Outreach Admin of organization can grant the Admin access to the user and can give API access credentials)
 
-
-## Steps For Authorization Code Generation
- :heavy_exclamation_mark:  [IMPORTANT] : To test and run the Outreach Provider requires  the API access credentials<br><br>
-
-1. <br>
-
-
 ## Initialise Outreach Provider in local machine 
 1. Clone the repository  to $GOPATH/src/github.com/kunalp-gohire/Outreach_Terraform_Provider/tree/main<br>
 2. Add the Client ID, Client Secret, Redirect URI and authorization code to respective fields in `main.tf` <br>
