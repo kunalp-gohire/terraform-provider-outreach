@@ -13,7 +13,7 @@ provider "outreach" {
 
 resource "outreach_resource_user" "import" {
   email       = "kpgkunalgohire@gmail.com"
-  firstname   = "User11111"          
+  firstname   = "User11111"
   lastname    = "Test11"
   locked      = true
   phonenumber = ""

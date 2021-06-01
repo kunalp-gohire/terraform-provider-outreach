@@ -15,9 +15,9 @@ func TestAccUser_Basic(t *testing.T) {
 				Config: testAccCheckUserBasic(),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckUserDataExists("outreach_resource_user.user1"),
-					resource.TestCheckResourceAttr("outreach_resource_user.user1", "email", "asthayuno45@gmail.com"),
-					resource.TestCheckResourceAttr("outreach_resource_user.user1", "firstname", "Test"),
-					resource.TestCheckResourceAttr("outreach_resource_user.user1", "lastname", "User"),
+					resource.TestCheckResourceAttr("outreach_resource_user.user1", "email", "kpgkunalgohire2122@gmail.com"),
+					resource.TestCheckResourceAttr("outreach_resource_user.user1", "firstname", "Test2244"),
+					resource.TestCheckResourceAttr("outreach_resource_user.user1", "lastname", "User2222"),
 				),
 			},
 		},
@@ -27,9 +27,9 @@ func TestAccUser_Basic(t *testing.T) {
 func testAccCheckUserBasic() string {
 	return fmt.Sprintf(`
 resource "outreach_resource_user" "user1" {
-  email= "asthayuno45@gmail.com"
-  firstname="Test"
-  lastname= "User"
+  email= "kpgkunalgohire2122@gmail.com"
+  firstname="Test2244"
+  lastname= "User2222"
   locked= true
 }
 `)
@@ -45,11 +45,11 @@ func TestAccUser_Update(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckUserDataExists("outreach_resource_user.user2"),
 					resource.TestCheckResourceAttr(
-						"outreach_resource_user.user2", "email", "kpgkunalgohire22@gmail.com"),
+						"outreach_resource_user.user2", "email", "kpgkunal44@gmail.com"),
 					resource.TestCheckResourceAttr(
-						"outreach_resource_user.user2", "firstname", "UserU"),
+						"outreach_resource_user.user2", "firstname", "User444"),
 					resource.TestCheckResourceAttr(
-						"outreach_resource_user.user2", "lastname", "TestU"),
+						"outreach_resource_user.user2", "lastname", "TestU244"),
 				),
 			},
 			{
@@ -57,11 +57,11 @@ func TestAccUser_Update(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckUserDataExists("outreach_resource_user.user2"),
 					resource.TestCheckResourceAttr(
-						"outreach_resource_user.user2", "email", "kpgkunalgohire22@gmail.com"),
+						"outreach_resource_user.user2", "email", "kpgkunal44@gmail.com"),
 					resource.TestCheckResourceAttr(
-						"outreach_resource_user.user2", "firstname", "TestU"),
+						"outreach_resource_user.user2", "firstname", "TESTU21"),
 					resource.TestCheckResourceAttr(
-						"outreach_resource_user.user2", "lastname", "UserU"),
+						"outreach_resource_user.user2", "lastname", "USERU21"),
 				),
 			},
 		},
@@ -71,9 +71,9 @@ func TestAccUser_Update(t *testing.T) {
 func testAccCheckUserUpdatePre() string {
 	return fmt.Sprintf(`
 resource "outreach_resource_user" "user2" {
-  email= "kpgkunalgohire22@gmail.com"
-  firstname="UserU"
-  lastname= "TestU"
+  email= "kpgkunal44@gmail.com"
+  firstname="User444"
+  lastname= "TestU244"
   locked= true	
 }
 `)
@@ -82,9 +82,9 @@ resource "outreach_resource_user" "user2" {
 func testAccCheckUserUpdatePost() string {
 	return fmt.Sprintf(`
 resource "outreach_resource_user" "user2" {
-  email= "kpgkunalgohire22@gmail.com"
-  firstname="TestU"
-  lastname= "UserU"
+  email= "kpgkunal44@gmail.com"
+  firstname="TESTU21"
+  lastname= "USERU21"
   locked= true
 }
 `)

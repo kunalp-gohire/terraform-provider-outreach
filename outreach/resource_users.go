@@ -2,18 +2,33 @@ package outreach
 
 import (
 	"context"
-	"strconv"
-	"terraform-provider-outreach/client"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"regexp"
+	"strconv"
+	"terraform-provider-outreach/client"
 )
+
+func validateEmail(v interface{}, k string) (ws []string, es []error) {
+	var errs []error
+	var warns []string
+	value := v.(string)
+	var emailRegex = regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	if !(emailRegex.MatchString(value)) {
+		errs = append(errs, fmt.Errorf("expected emailId is not valid  %s", k))
+		return warns, errs
+	}
+	return
+}
 
 func resourceUser() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"email": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validateEmail,
 			},
 			"firstname": {
 				Type:     schema.TypeString,
@@ -52,8 +67,8 @@ func resourceUser() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		/*
-		Below custom import function is implemented to import user using email id instead of
-		user ID. 
+			Below custom import function is implemented to import user using email id instead of
+			user ID.
 		*/
 		// Importer: &schema.ResourceImporter{
 		// 	State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
@@ -147,7 +162,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	if d.HasChange("lastname") || d.HasChange("firstname") || d.HasChange("locked") || d.HasChange("phonenumber") || d.HasChange("title"){
+	if d.HasChange("lastname") || d.HasChange("firstname") || d.HasChange("locked") || d.HasChange("phonenumber") || d.HasChange("title") {
 		req_json := client.Data{
 			Data: client.User{
 				Type: "user",

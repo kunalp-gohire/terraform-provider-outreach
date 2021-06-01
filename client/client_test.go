@@ -67,10 +67,10 @@ func TestClient_CreateUser(t *testing.T) {
 				Data: User{
 					Type: "user",
 					Attributes: Attributes{
-						Email:     "kpgkunalgohire@gmail.com",
-						FirstName: "User1",
+						Email:     "kpgkunalgohire123456@gmail.com",
+						FirstName: "User123456",
 						LastName:  "Test1",
-						Locked:    false,
+						Locked:    true,
 						PhoneNumber: "",
 						Title: "Test",
 					},
@@ -81,11 +81,11 @@ func TestClient_CreateUser(t *testing.T) {
 					Type: "user",
 					ID: 3,
 					Attributes: Attributes{
-						Email:     "kpgkunalgohire@gmail.com",
-						FirstName: "User1",
+						Email:     "kpgkunalgohire123456@gmail.com",
+						FirstName: "User123456",
 						LastName:  "Test1",
-						Locked:    false,
-						UserName: "Test_User",
+						Locked:    true,
+						UserName: "Test123456_Test1",
 						PhoneNumber: "",
 						Title: "Test",
 					},
@@ -174,6 +174,7 @@ func TestClient_UpdateUser(t *testing.T) {
 						LastName:  "Test11",
 						Locked:    true,
 						UserName: "Test_User",
+						//fist +last
 						PhoneNumber: "",
 						Title: "Test",
 					},
