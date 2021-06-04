@@ -68,7 +68,8 @@ func resourceUser() *schema.Resource {
 		},
 		/*
 			Below custom import function is implemented to import user using email id instead of
-			user ID.
+			user ID. But email ID can be changed or update using UI. So can't use email ID 
+			as primary key.
 		*/
 		// Importer: &schema.ResourceImporter{
 		// 	State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {

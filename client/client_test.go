@@ -14,7 +14,7 @@ func TestClient_GetUserData(t *testing.T) {
 		expectedResp *Data
 	}{
 		{
-			testName:  "useer exists",
+			testName:  "user exists",
 			userID:    "3",
 			expectErr: false,
 			expectedResp: &Data{
@@ -35,7 +35,7 @@ func TestClient_GetUserData(t *testing.T) {
 		},
 		{
 			testName:     "user does not exist",
-			userID:       "100",
+			userID:       "123",
 			expectErr:    true,
 			expectedResp: nil,
 		},
@@ -174,7 +174,6 @@ func TestClient_UpdateUser(t *testing.T) {
 						LastName:  "Test11",
 						Locked:    true,
 						UserName: "Test_User",
-						//fist +last
 						PhoneNumber: "",
 						Title: "Test",
 					},

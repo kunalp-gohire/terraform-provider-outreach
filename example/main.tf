@@ -41,25 +41,13 @@ resource "outreach_resource_user" "user1" {
   title       = "Test"
 }
 
-resource "outreach_resource_user" "user2" {
-  email     = "kpgkunalgohire12345@gmail.com"
-  firstname = "Astha"
-  lastname  = "Test12345"
-  locked    = false
-  # phonenumber= ""
-  # title="Test"
-}
 resource "outreach_resource_user" "user3" {
   email     = "ashwini.gaddagi@clevertap.com"
   firstname = "Ashwini"
   lastname  = "Test12345"
-  locked    = false
+  locked    = true
   # phonenumber= ""
   # title="Test"
-}
-
-output "user_instance2" {
-  value = outreach_resource_user.user2
 }
 
 output "user_instance3" {

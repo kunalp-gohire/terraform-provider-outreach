@@ -2,8 +2,8 @@ package outreach
 
 import (
 	"fmt"
-	"testing"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"testing"
 )
 
 func TestAccUser_Basic(t *testing.T) {
@@ -15,9 +15,10 @@ func TestAccUser_Basic(t *testing.T) {
 				Config: testAccCheckUserBasic(),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckUserDataExists("outreach_resource_user.user1"),
-					resource.TestCheckResourceAttr("outreach_resource_user.user1", "email", "kpgkunalgohire2122@gmail.com"),
-					resource.TestCheckResourceAttr("outreach_resource_user.user1", "firstname", "Test2244"),
-					resource.TestCheckResourceAttr("outreach_resource_user.user1", "lastname", "User2222"),
+					resource.TestCheckResourceAttr("outreach_resource_user.user1", "email", "kpgkunalgohire2222@gmail.com"),
+					resource.TestCheckResourceAttr("outreach_resource_user.user1", "firstname", "Test12244"),
+					resource.TestCheckResourceAttr("outreach_resource_user.user1", "lastname", "User12222"),
+					resource.TestCheckResourceAttr("outreach_resource_user.user1", "locked", "true"),
 				),
 			},
 		},
@@ -27,9 +28,9 @@ func TestAccUser_Basic(t *testing.T) {
 func testAccCheckUserBasic() string {
 	return fmt.Sprintf(`
 resource "outreach_resource_user" "user1" {
-  email= "kpgkunalgohire2122@gmail.com"
-  firstname="Test2244"
-  lastname= "User2222"
+  email= "kpgkunalgohire2222@gmail.com"
+  firstname="Test12244"
+  lastname= "User12222"
   locked= true
 }
 `)
@@ -50,6 +51,8 @@ func TestAccUser_Update(t *testing.T) {
 						"outreach_resource_user.user2", "firstname", "User444"),
 					resource.TestCheckResourceAttr(
 						"outreach_resource_user.user2", "lastname", "TestU244"),
+					resource.TestCheckResourceAttr(
+						"outreach_resource_user.user2", "locked", "true"),
 				),
 			},
 			{
@@ -89,3 +92,4 @@ resource "outreach_resource_user" "user2" {
 }
 `)
 }
+

@@ -38,7 +38,7 @@ func NewClient(client_id string, client_secret string,  refresh_token string, ac
 	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2", nil)
 	if err != nil {
 		log.Println("[Token Error]: ",err )
-		return nil, err
+		return nil, fmt.Errorf("%v", err)
 	}
 	client := &http.Client{Timeout: 10 * time.Second}
 	req.Header.Add("Authorization", "Bearer "+Token)
@@ -46,16 +46,17 @@ func NewClient(client_id string, client_secret string,  refresh_token string, ac
 	re, err := client.Do(req)
 	if err != nil {
 		log.Println("[Token Error]: ",err )
-		return nil, err
+		return nil, fmt.Errorf("%v", err)
 	}
 	if re.StatusCode != 200 {
-		fmt.Println("enterd for new tok")
 		tok, _ := TokenGen(client_id, client_secret,  refresh_token, acc_token)
 		ar := AuthResp{}
 		json.Unmarshal(tok, &ar)
 		os.Setenv("acc_token", ar.AccToken)
+		os.Setenv("refresh_token",ar.RefreshToken)
 		Token = ar.AccToken
 	}
+	os.Setenv("acc_token", Token)
 	c.AccessToken = "Bearer " + Token
 	return &c, nil
 }
@@ -86,10 +87,9 @@ func TokenGen(client_id string, client_secret string,  refresh_token string, acc
 		log.Println("[Token Error]: ",err)
 		return nil, fmt.Errorf("%v",err)
 	}
-	Token := os.Getenv("acc_token")
 	if res.StatusCode != 200 {
 		log.Println("[Token Error]: ",Errors[res.StatusCode])
-		return nil, fmt.Errorf("status: %d, %s, token %s", res.StatusCode,Errors[res.StatusCode],Token)
+		return nil, fmt.Errorf("status: %d, %s,", res.StatusCode,Errors[res.StatusCode])
 	}
 	return body, nil
 }
@@ -118,7 +118,8 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 /*
    User ID is requires to fetch the Outreach user. GetDataSourceUser() function defined to fetch user 
    and import the user using email ID.The function fetch the all outreach users of organization and 
-   extract the user with given email id    
+   extract the user with given email id. But email ID can be changed or update using UI. So can't use
+   email ID as primary key.    
 */
 // func (c *Client) GetDataSourceUser(email string) (*User, error) {
 // 	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2/users", nil)
