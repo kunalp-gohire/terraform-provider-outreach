@@ -41,22 +41,17 @@ resource "outreach_resource_user" "user1" {
   title       = "Test"
 }
 
+output "user_instance1" {
+  value = outreach_resource_user.user1
+}
+
 resource "outreach_resource_user" "user3" {
   email     = "ashwini.gaddagi@clevertap.com"
   firstname = "Ashwini"
   lastname  = "Test12345"
   locked    = true
-  # phonenumber= ""
-  # title="Test"
 }
 
 output "user_instance3" {
   value = outreach_resource_user.user3
 }
-
-output "user_instance1" {
-  value = outreach_resource_user.user1
-}
-
-
-

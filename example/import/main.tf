@@ -11,16 +11,15 @@ provider "outreach" {
 
 }
 
-resource "outreach_resource_user" "import" {
-  email       = "kpgkunalgohire@gmail.com"
-  firstname   = "User11"
-  lastname    = "Test11"
-  locked      = true
-  phonenumber = ""
-  title       = "Test"
+resource "outreach_resource_user" "kunalgohire" {
+  email     = "kunalp-gohire@gmail.com"
+  firstname = "kunalp"
+  lastname  = "Test12345"
+  locked    = true
+  title     = "Temp"
 }
 
 
 output "user_import" {
-  value = outreach_resource_user.import
+  value = outreach_resource_user.kunalgohire
 }
