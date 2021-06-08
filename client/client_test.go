@@ -1,9 +1,9 @@
 package client
 
 import (
+	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestClient_GetUserData(t *testing.T) {
@@ -22,13 +22,13 @@ func TestClient_GetUserData(t *testing.T) {
 					Type: "user",
 					ID:   3,
 					Attributes: Attributes{
-						Email:     "kpgkunalgohire@gmail.com",
-						FirstName: "User11",
-						LastName:  "Test11",
-						Locked:    true,
-						UserName: "Test_User",
+						Email:       "kpgkunalgohire@gmail.com",
+						FirstName:   "User11",
+						LastName:    "Test11",
+						Locked:      true,
+						UserName:    "Test_User",
 						PhoneNumber: "",
-						Title: "Test",
+						Title:       "Test",
 					},
 				},
 			},
@@ -42,7 +42,7 @@ func TestClient_GetUserData(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.testName, func(t *testing.T) {
-			client, _ := NewClient(os.Getenv("outreach_client_id"), os.Getenv("outreach_client_secrete"),  os.Getenv("outreach_refresh_token"), os.Getenv("acc_token"))
+			client, _ := NewClient(os.Getenv("outreach_client_id"), os.Getenv("outreach_client_secrete"), os.Getenv("outreach_refresh_token"), os.Getenv("acc_token"), os.Getenv("outreach_redirect_url"))
 			user, err := client.GetUserData(tc.userID)
 			if tc.expectErr {
 				assert.Error(t, err)
@@ -67,27 +67,27 @@ func TestClient_CreateUser(t *testing.T) {
 				Data: User{
 					Type: "user",
 					Attributes: Attributes{
-						Email:     "kpgkunalgohire77@gmail.com",
-						FirstName: "User77",
-						LastName:  "Test77",
-						Locked:    true,
+						Email:       "kpgkunalgohire77@gmail.com",
+						FirstName:   "User77",
+						LastName:    "Test77",
+						Locked:      true,
 						PhoneNumber: "",
-						Title: "Test",
+						Title:       "Test",
 					},
 				},
 			},
 			expectedResp: &Data{
 				Data: User{
 					Type: "user",
-					ID: 3,
+					ID:   3,
 					Attributes: Attributes{
-						Email:     "kpgkunalgohire77@gmail.com",
-						FirstName: "User77",
-						LastName:  "Test77",
-						Locked:    true,
-						UserName: "User77_Test77",
+						Email:       "kpgkunalgohire77@gmail.com",
+						FirstName:   "User77",
+						LastName:    "Test77",
+						Locked:      true,
+						UserName:    "User77_Test77",
 						PhoneNumber: "",
-						Title: "Test",
+						Title:       "Test",
 					},
 				},
 			},
@@ -99,26 +99,26 @@ func TestClient_CreateUser(t *testing.T) {
 				Data: User{
 					Type: "user",
 					Attributes: Attributes{
-						Email:     "kpgkunalgohire@gmail.com",
-						FirstName: "User1",
-						LastName:  "Test1",
-						Locked:    false,
+						Email:       "kpgkunalgohire@gmail.com",
+						FirstName:   "User1",
+						LastName:    "Test1",
+						Locked:      false,
 						PhoneNumber: "",
-						Title: "Test",
+						Title:       "Test",
 					},
 				},
 			},
 			expectedResp: &Data{
 				Data: User{
 					Type: "user",
-					ID: 3,
+					ID:   3,
 					Attributes: Attributes{
-						Email:     "kpgkunalgohire@gmail.com",
-						FirstName: "User1",
-						LastName:  "Test1",
-						Locked:    false,
+						Email:       "kpgkunalgohire@gmail.com",
+						FirstName:   "User1",
+						LastName:    "Test1",
+						Locked:      false,
 						PhoneNumber: "",
-						Title: "Test",
+						Title:       "Test",
 					},
 				},
 			},
@@ -127,7 +127,7 @@ func TestClient_CreateUser(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.testName, func(t *testing.T) {
-			client, _ := NewClient(os.Getenv("outreach_client_id"), os.Getenv("outreach_client_secrete"),  os.Getenv("outreach_refresh_token"), os.Getenv("acc_token"))
+			client, _ := NewClient(os.Getenv("outreach_client_id"), os.Getenv("outreach_client_secrete"), os.Getenv("outreach_refresh_token"), os.Getenv("acc_token"), os.Getenv("outreach_redirect_url"))
 			user, err := client.CreateUser(tc.newItem)
 			if tc.expectErr {
 				assert.Error(t, err)
@@ -152,30 +152,30 @@ func TestClient_UpdateUser(t *testing.T) {
 			updatedUser: Data{
 				Data: User{
 					Type: "user",
-					ID: 3,
+					ID:   3,
 					Attributes: Attributes{
-						Email:     "kpgkunalgohire@gmail.com",
-						FirstName: "User11",
-						LastName:  "Test11",
-						Locked:    true,
-						UserName: "Test_User",
+						Email:       "kpgkunalgohire@gmail.com",
+						FirstName:   "User11",
+						LastName:    "Test11",
+						Locked:      true,
+						UserName:    "Test_User",
 						PhoneNumber: "",
-						Title: "Test",
+						Title:       "Test",
 					},
 				},
 			},
 			expectedResp: &Data{
 				Data: User{
 					Type: "user",
-					ID: 3,
+					ID:   3,
 					Attributes: Attributes{
-						Email:     "kpgkunalgohire@gmail.com",
-						FirstName: "User11",
-						LastName:  "Test11",
-						Locked:    true,
-						UserName: "Test_User",
+						Email:       "kpgkunalgohire@gmail.com",
+						FirstName:   "User11",
+						LastName:    "Test11",
+						Locked:      true,
+						UserName:    "Test_User",
 						PhoneNumber: "",
-						Title: "Test",
+						Title:       "Test",
 					},
 				},
 			},
@@ -188,14 +188,14 @@ func TestClient_UpdateUser(t *testing.T) {
 			updatedUser: Data{
 				Data: User{
 					Type: "user",
-					ID: 3,
+					ID:   3,
 					Attributes: Attributes{
-						Email:     "kpgkunalgohire@gmail.com",
-						FirstName: "User1",
-						LastName:  "Test1",
-						Locked:    true,
+						Email:       "kpgkunalgohire@gmail.com",
+						FirstName:   "User1",
+						LastName:    "Test1",
+						Locked:      true,
 						PhoneNumber: "",
-						Title: "Test",
+						Title:       "Test",
 					},
 				},
 			},
@@ -205,7 +205,7 @@ func TestClient_UpdateUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.testName, func(t *testing.T) {
-			client, _ := NewClient(os.Getenv("outreach_client_id"), os.Getenv("outreach_client_secrete"),  os.Getenv("outreach_refresh_token"), os.Getenv("acc_token"))
+			client, _ := NewClient(os.Getenv("outreach_client_id"), os.Getenv("outreach_client_secrete"), os.Getenv("outreach_refresh_token"), os.Getenv("acc_token"), os.Getenv("outreach_redirect_url"))
 			_, err := client.UpdateUser(tc.userID, tc.updatedUser)
 			if tc.expectErr {
 				assert.Error(t, err)
