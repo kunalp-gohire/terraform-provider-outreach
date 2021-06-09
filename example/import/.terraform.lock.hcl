@@ -5,6 +5,6 @@ provider "outreach.com/edu/outreach" {
   version     = "1.0.0"
   constraints = "1.0.0"
   hashes = [
-    "h1:T/a18aZ8Ne7iMtDC/RHwnwK6OegnDye7NbBhgO8hLyM=",
+    "h1:QH/Ul1RfTMyfHpGZYplJwAlxaTSqciXXH8BGQhfMdj0=",
   ]
 }

@@ -62,14 +62,14 @@ go mod tidy
 ~/.terraform.d/plugins/${host_name}/${namespace}/${type}/${version}/${target}
 ``` 
 ```bash
-mkdir -p ~/.terraform.d/plugins/hashicorp.com/edu/outreach/1.0/[OS_ARCH]
+mkdir -p ~/.terraform.d/plugins/outreach.com/edu/outreach/1.0/[OS_ARCH]
 ```
-For eg. `mkdir -p ~/.terraform.d/plugins/hashicorp.com/edu/outreach/1.0/windows_amd64`<br>
+For eg. `mkdir -p ~/.terraform.d/plugins/outreach.com/edu/outreach/1.0/windows_amd64`<br>
 
 2. Run `go build -o terraform-provider-outreach.exe`. This will save the binary (`.exe`) file in the main/root directory. <br>
 3. Run this command to move this binary file to the appropriate location.
  ```
- move terraform-provider-outreach.exe %APPDATA%\terraform.d\plugins\hashicorp.com\edu\outreach\1.0\[OS_ARCH]
+ move terraform-provider-outreach.exe %APPDATA%\terraform.d\plugins\outreach.com\edu\outreach\1.0\[OS_ARCH]
  ``` 
 Otherwise you can manually move the file from current directory to destination directory.<br>
 
