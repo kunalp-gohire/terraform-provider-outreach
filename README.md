@@ -44,9 +44,9 @@ curl https://api.outreach.io/oauth/token \
 
 
 ## Building The Provider 
-1. Clone the ‘main’ branch of the [Terraform Outreach Provider](https://github.com/kunalp-gohire/Outreach_Terraform_Provider.git)<br>
+1. Clone the ‘main’ branch of the [Terraform Outreach Provider](https://github.com/kunalp-gohire/terraform-provider-outreach.git)<br>
 ```
-https://github.com/kunalp-gohire/Outreach_Terraform_Provider.git
+https://github.com/kunalp-gohire/terraform-provider-outreach.git
 ```
 
 2. Run the following commands :
