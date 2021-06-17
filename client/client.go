@@ -151,7 +151,7 @@ func (c *Client) GetUserData(UserId string) (*Data, error) {
 	body, err := c.doRequest(req)
 	if err != nil {
 		log.Println("[GetUser Error]: ", err)
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	data := Data{}
 	err = json.Unmarshal(body, &data)
@@ -176,7 +176,7 @@ func (c *Client) CreateUser(userCreateInfo Data) (*Data, error) {
 	body, err := c.doRequest(req)
 	if err != nil {
 		log.Println("[CreateUser Error]: ", err)
-		return nil, fmt.Errorf("[Create User Error]:  %v", err)
+		return nil, fmt.Errorf("[CreateUser Error]:  %v", err)
 	}
 	user := Data{}
 	err = json.Unmarshal(body, &user)
@@ -210,4 +210,13 @@ func (c *Client) UpdateUser(UserId string, userUpdateInfo Data) (*Data, error) {
 		return nil, fmt.Errorf("%v", err)
 	}
 	return &user, nil
+}
+
+func (c *Client) IsRetry(err error) bool {
+	if err != nil {
+		if strings.Contains(err.Error(), "User Has Sent Too Many Request, StatusCode = 429")==true {
+			return true
+		}
+	}
+	return false
 }

@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"regexp"
 	"strconv"
 	"strings"
 	"terraform-provider-outreach/client"
+	"time"
 )
 
 func validateEmail(v interface{}, k string) (ws []string, es []error) {
@@ -112,19 +114,33 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 			},
 		},
 	}
-	user, err := c.CreateUser(req_json)
+	var err error
+	retryErr := resource.Retry(2*time.Minute, func() *resource.RetryError {
+		user, err := c.CreateUser(req_json)
+		if err != nil {
+			if c.IsRetry(err) {
+				return resource.RetryableError(err)
+			}
+			return resource.NonRetryableError(err)
+		}
+		id := strconv.Itoa(user.Data.ID)
+		d.Set("email", user.Data.Attributes.Email)
+		d.Set("firstname", user.Data.Attributes.FirstName)
+		d.Set("lastname", user.Data.Attributes.LastName)
+		d.Set("locked", user.Data.Attributes.Locked)
+		d.Set("username", user.Data.Attributes.UserName)
+		d.Set("title", user.Data.Attributes.Title)
+		d.Set("phonenumber", user.Data.Attributes.PhoneNumber)
+		d.SetId(id)
+		return nil
+	})
+	if retryErr != nil {
+		time.Sleep(2 * time.Second)
+		return diag.FromErr(retryErr)
+	}
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	id := strconv.Itoa(user.Data.ID)
-	d.Set("email", user.Data.Attributes.Email)
-	d.Set("firstname", user.Data.Attributes.FirstName)
-	d.Set("lastname", user.Data.Attributes.LastName)
-	d.Set("locked", user.Data.Attributes.Locked)
-	d.Set("username", user.Data.Attributes.UserName)
-	d.Set("title", user.Data.Attributes.Title)
-	d.Set("phonenumber", user.Data.Attributes.PhoneNumber)
-	d.SetId(id)
 	return diags
 }
 
@@ -132,26 +148,33 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	var diags diag.Diagnostics
 	c := m.(*client.Client)
 	id := d.Id()
-	user, err := c.GetUserData(id)
-	if err != nil {
-		if strings.Contains(err.Error(), "User Does Not Exist , StatusCode = 404") {
-			diags = append(diags, diag.Diagnostic{
-				Severity: diag.Warning,
-				Summary:  "User Does Not Exist , StatusCode = 404",
-			})
+	retryErr := resource.Retry(2*time.Minute, func() *resource.RetryError {
+		user, err := c.GetUserData(id)
+		if err != nil {
+			if c.IsRetry(err) {
+				return resource.RetryableError(err)
+			}
+			return resource.NonRetryableError(err)
+		}
+		d.Set("uid", user.Data.ID)
+		d.Set("email", user.Data.Attributes.Email)
+		d.Set("firstname", user.Data.Attributes.FirstName)
+		d.Set("lastname", user.Data.Attributes.LastName)
+		d.Set("locked", user.Data.Attributes.Locked)
+		d.Set("username", user.Data.Attributes.UserName)
+		d.Set("title", user.Data.Attributes.Title)
+		d.Set("phonenumber", user.Data.Attributes.PhoneNumber)
+		d.SetId(strconv.Itoa(user.Data.ID))
+		return nil
+	})
+	if retryErr != nil {
+		time.Sleep(2 * time.Second)
+		if strings.Contains(retryErr.Error(), "User Does Not Exist , StatusCode = 404") {
+			d.SetId("")
 			return diags
 		}
-		return diag.FromErr(err)
+		return diag.FromErr(retryErr)
 	}
-	d.Set("uid", user.Data.ID)
-	d.Set("email", user.Data.Attributes.Email)
-	d.Set("firstname", user.Data.Attributes.FirstName)
-	d.Set("lastname", user.Data.Attributes.LastName)
-	d.Set("locked", user.Data.Attributes.Locked)
-	d.Set("username", user.Data.Attributes.UserName)
-	d.Set("title", user.Data.Attributes.Title)
-	d.Set("phonenumber", user.Data.Attributes.PhoneNumber)
-	d.SetId(strconv.Itoa(user.Data.ID))
 	return diags
 }
 
@@ -184,9 +207,24 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 				},
 			},
 		}
-		UserID := d.Id()
-		d.SetId(UserID)
-		c.UpdateUser(UserID, req_json)
+		retryErr := resource.Retry(2*time.Minute, func() *resource.RetryError {
+			UserID := d.Id()
+			d.SetId(UserID)
+			if _, err = c.UpdateUser(UserID, req_json); err != nil {
+				if c.IsRetry(err) {
+					return resource.RetryableError(err)
+				}
+				return resource.NonRetryableError(err)
+			}
+			return nil
+		})
+		if retryErr != nil {
+			time.Sleep(2 * time.Second)
+			return diag.FromErr(retryErr)
+		}
+		if err != nil {
+			return diag.FromErr(err)
+		}
 	}
 	return resourceUserRead(ctx, d, m)
 }
@@ -202,7 +240,7 @@ func resourceUserImporter(ctx context.Context, d *schema.ResourceData, m interfa
 	c := m.(*client.Client)
 	user, err := c.GetUserData(uid)
 	if err != nil {
-		return nil, fmt.Errorf("%v ", err)
+		return nil, err
 	}
 	d.Set("uid", user.Data.ID)
 	d.Set("email", user.Data.Attributes.Email)
