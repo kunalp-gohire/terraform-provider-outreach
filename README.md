@@ -1,9 +1,7 @@
-# Outreach Terraform Provider
-
 * This terraform provider allows to perform Create ,Read ,Update, Import and Lock    Outreach User(s). 
 * To fetch and import a user server generated User ID is needed.
 * Outreach doesn't provide an API to delete  a user.
-* [Outreach API documentation](https://api.outreach.io/api/v2/docs#getting-started)
+
 
 ## Requirements
 
@@ -11,6 +9,7 @@
 * [Terraform](https://www.terraform.io/downloads.html) 0.13.x <br/>
 * [Outreach API Access](https://www.outreach.io/product/platform/api)
 * Outreach Admin Account (Outreach Admin of organization can grant the Admin access to the user and can give API access credentials)
+* [Outreach API documentation](https://api.outreach.io/api/v2/docs#getting-started)
 
 ## Application Setup 
 
@@ -58,18 +57,13 @@ go mod tidy
 
 ## Managing plugins for terraform
 1. Run the following command to create a vendor subdirectory which will comprise of  all provider dependencies. <br>
-```
-~/.terraform.d/plugins/${host_name}/${namespace}/${type}/${version}/${target}
-``` 
 ```bash
-mkdir -p ~/.terraform.d/plugins/outreach.com/edu/outreach/1.0/[OS_ARCH]
+mkdir -p ~/.terraform.d/plugins/outreach.com/edu/outreach/1.0/windows_amd64
 ```
-For eg. `mkdir -p ~/.terraform.d/plugins/outreach.com/edu/outreach/1.0/windows_amd64`<br>
-
 2. Run `go build -o terraform-provider-outreach.exe`. This will save the binary (`.exe`) file in the main/root directory. <br>
 3. Run this command to move this binary file to the appropriate location.
  ```
- move terraform-provider-outreach.exe %APPDATA%\terraform.d\plugins\outreach.com\edu\outreach\1.0\[OS_ARCH]
+ move terraform-provider-outreach.exe %APPDATA%\terraform.d\plugins\outreach.com\edu\outreach\1.0\windows_amd64
  ``` 
 Otherwise you can manually move the file from current directory to destination directory.<br>
 
@@ -77,52 +71,55 @@ Otherwise you can manually move the file from current directory to destination d
 [OR]
 
 1. Download required binaries <br>
-2. move binary `~/.terraform.d/plugins/[architecture name]/`
+2. move binary `%APPDATA%\terraform.d\plugins\outreach.com\edu\outreach\1.0\windows_amd64`
 
 
 ## Working with terraform
 
 
 ### Authentication
-1. Add the Client ID, Client Secret, Redirect URI and Refresh Token to respective fields in `main.tf` <br>
+1.  Add `terraform` block and `provider` block as shown in [example usage](#example-usage).
+2. Add the Client ID, Client Secret, Redirect URI and Refresh Token to respective fields in provider block<br>
 
 [OR]
 
-1. Set the the global environment variables as Follow:
-   * Client ID - outreach_client_id
-   * Client Secrete - outreach_client_secrete
-   * Refresh Token - outreach_refresh_token  
-   * Redirect URL - outreach_redirect_url
+2. Set the the global environment variables as Follow:
+   * Client ID      - OUTREACH_CLIENT_ID
+   * Client Secrete - OUTREACH_CLIENT_SECRET
+   * Refresh Token  - OUTREACH_REFRESH_TOKEN  
+   * Redirect URL   - OUTREACH_REDIRECT_URI 
 
 
 ### Basic Terraform Commands
 * `terraform init`     - Prepare your working directory for other commands
-* `terraform validate` -    Check whether the configuration is valid
-* `terraform plan`     -   Show changes required by the current configuration
-* `terraform apply`    -   Create or update infrastructure
-* `terraform destroy`  -    Destroy previously-created infrastructure
+* `terraform validate` - Check whether the configuration is valid
+* `terraform plan`     - Show changes required by the current configuration
+* `terraform apply`    - Create or update infrastructure
+* `terraform destroy`  - Destroy previously-created infrastructure
 
 ### Create User
-1. Add the user email, first name, last name, locked, title and phone number in the respective field in `main.tf`
+1. Add the user email, first name, last name, locked, title and phone number in the respective field in resource block as shown in [example usage](#example-usage).
 2. Initialize the terraform provider `terraform init`
 3. Check the changes applicable using `terraform plan` and apply using `terraform apply`
 4. You will see that a user has been successfully created and an user seat claim mail has been sent to the user.
 
 ### Update the user
-1. Update the data of the user in the `main.tf` file and apply using `terraform apply`
+1. Update the data of the user in the resource block and apply using `terraform apply`.
+2. First name, last name, locked status, and title can be updated.
+3. Email can't be updated through API. 
 
 ### Read the User Data
-1. Add data and output blocks in the `main.tf` file after that add id field  and user ID  and run `terraform plan` to read user data
+1. Add data and output blocks as shown in [example usage](#example-usage) after that add id field  and user ID  and run `terraform plan` to read user data.
 
 ### Lock/Unlock the user
-1. Change the value of ‘locked’  from `false` to `true` or vice versa and run `terraform apply`.
+1. Change the value of ‘locked’  from `false` to `true` or vice versa in the resource block and run `terraform apply`.
 
 ### Delete the user
  :heavy_exclamation_mark:  [IMPORTANT] : Outreach doesn’t provide an API to delete users, instead of delete they suggest to lock the user. To delete user from state file follow below instructions:<br><br>
-1. Delete or comment the resource block of the particular user from the `main.tf` file and run `terraform apply`.
+1. Delete or comment the resource block of the particular user and run `terraform apply`.
 
 ### Import a User Data
-1. Write manually a resource configuration block for the User in `main.tf`, to which the imported object will be mapped or define the empty resource block.
+1. Write manually a resource configuration block as shown in [example usage](#example-usage), to which the imported object will be mapped or define the empty resource block.
 2. Run the command `terraform outreach_resource_user.import  [user ID]`
 3. Check for the attributes in the `.tfstate` file and fill them accordingly in the resource block.
 ```
@@ -131,14 +128,8 @@ terraform outreach_resource_user.import  [user ID]
 
 
 
-### Testing the Provider
-1. Navigate to the test file directory.
-2. Run command `go test` for unit testing and for acceptance testing run command `TF_ACC=1 go test` . These commands will give combined test results for the execution or errors if any failure occurs.
-3. If you want to see test result of each test function individually while running test in a single go, run command `go test -v`
-4. To check test cover run `go test -cover`
 
-
-## Example Usage
+## Example Usage<a id="example-usage"></a>
 ```terraform
 terraform {
   required_providers{
@@ -153,39 +144,26 @@ provider "outreach" {
     
 }
 
-data "outreach_users" "user1"{
-   email = "[USER_EMAIL]"
+data "outreach_user" "user1"{
+   id = 5
 }
 
 output "user_data" {
-  value = data.outreach_users.user1
+  value = data.outreach_user.user1
 }
 
-resource "outreach_resource_user" "user"{
-  email       = "[USER_EMAIL]"
-  firstname   = "[USER_FIRST_NAME]"
-  lastname    = "[USER_LAST_NAME]"
-  locked      = [USER_ACCOUNT_STATUS]
-  phonenumber = "[USER_PHONE_NUMBER]"
-  title       = "[USER_JOB_TITLE]"
+resource "outreach_user" "user"{
+  email       = "user@example.com"
+  firstname   = "Test"
+  lastname    = "User"
+  locked      = false
+  title       = "Developer"
 }
 
 output "user_instance" {
-  value = outreach_resource_user.user
+  value = outreach_user.user
 }
 
-resource "outreach_resource_user" "user1"{
-  email       = "[USER_EMAIL]"
-  firstname   = "[USER_FIRST_NAME]"
-  lastname    = "[USER_LAST_NAME]"
-  locked      = [USER_ACCOUNT_STATUS]
-  phonenumber = "[USER_PHONE_NUMBER]"
-  title       = "[USER_JOB_TITLE]"
-}
-
-output "user_instance1" {
-  value = outreach_resource_user.user1
-}
 ```
 
 ## Argument Reference
@@ -199,6 +177,8 @@ output "user_instance1" {
 * `title`       (string) - Job title of user in organization. 
 * `id`          (int)    - Server generated user ID. Required for fetch the user data using data block 
                            and import a user.                               
+
+
 
 
 

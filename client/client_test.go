@@ -42,7 +42,7 @@ func TestClient_GetUserData(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.testName, func(t *testing.T) {
-			client, _ := NewClient(os.Getenv("outreach_client_id"), os.Getenv("outreach_client_secrete"), os.Getenv("outreach_refresh_token"), os.Getenv("acc_token"), os.Getenv("outreach_redirect_url"))
+			client, _ := NewClient(os.Getenv("OUTREACH_CLIENT_ID"), os.Getenv("OUTREACH_CLIENT_SECRET"), os.Getenv("OUTREACH_REFRESH_TOKEN"),os.Getenv("OUTREACH_REDIRECT_URI"))
 			user, err := client.GetUserData(tc.userID)
 			if tc.expectErr {
 				assert.Error(t, err)
@@ -71,7 +71,6 @@ func TestClient_CreateUser(t *testing.T) {
 						FirstName:   "User77",
 						LastName:    "Test77",
 						Locked:      true,
-						PhoneNumber: "",
 						Title:       "Test",
 					},
 				},
@@ -79,7 +78,7 @@ func TestClient_CreateUser(t *testing.T) {
 			expectedResp: &Data{
 				Data: User{
 					Type: "user",
-					ID:   3,
+					ID:   20,
 					Attributes: Attributes{
 						Email:       "kpgkunalgohire77@gmail.com",
 						FirstName:   "User77",
@@ -127,7 +126,7 @@ func TestClient_CreateUser(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.testName, func(t *testing.T) {
-			client, _ := NewClient(os.Getenv("outreach_client_id"), os.Getenv("outreach_client_secrete"), os.Getenv("outreach_refresh_token"), os.Getenv("acc_token"), os.Getenv("outreach_redirect_url"))
+			client, _ := NewClient(os.Getenv("OUTREACH_CLIENT_ID"), os.Getenv("OUTREACH_CLIENT_SECRET"), os.Getenv("OUTREACH_REFRESH_TOKEN"),os.Getenv("OUTREACH_REDIRECT_URI"))
 			user, err := client.CreateUser(tc.newItem)
 			if tc.expectErr {
 				assert.Error(t, err)
@@ -159,7 +158,6 @@ func TestClient_UpdateUser(t *testing.T) {
 						LastName:    "Test11",
 						Locked:      true,
 						UserName:    "Test_User",
-						PhoneNumber: "",
 						Title:       "Test",
 					},
 				},
@@ -174,7 +172,6 @@ func TestClient_UpdateUser(t *testing.T) {
 						LastName:    "Test11",
 						Locked:      true,
 						UserName:    "Test_User",
-						PhoneNumber: "",
 						Title:       "Test",
 					},
 				},
@@ -194,7 +191,6 @@ func TestClient_UpdateUser(t *testing.T) {
 						FirstName:   "User1",
 						LastName:    "Test1",
 						Locked:      true,
-						PhoneNumber: "",
 						Title:       "Test",
 					},
 				},
@@ -205,7 +201,7 @@ func TestClient_UpdateUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.testName, func(t *testing.T) {
-			client, _ := NewClient(os.Getenv("outreach_client_id"), os.Getenv("outreach_client_secrete"), os.Getenv("outreach_refresh_token"), os.Getenv("acc_token"), os.Getenv("outreach_redirect_url"))
+			client, _ := NewClient(os.Getenv("OUTREACH_CLIENT_ID"), os.Getenv("OUTREACH_CLIENT_SECRET"), os.Getenv("OUTREACH_REFRESH_TOKEN"),os.Getenv("OUTREACH_REDIRECT_URI"))
 			_, err := client.UpdateUser(tc.userID, tc.updatedUser)
 			if tc.expectErr {
 				assert.Error(t, err)

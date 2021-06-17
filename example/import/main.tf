@@ -11,7 +11,7 @@ provider "outreach" {
 
 }
 
-resource "outreach_resource_user" "kunalgohire" {
+resource "outreach_user" "import" {
   email     = "kunalp-gohire@gmail.com"
   firstname = "kunalp"
   lastname  = "Test12345"
@@ -21,5 +21,5 @@ resource "outreach_resource_user" "kunalgohire" {
 
 
 output "user_import" {
-  value = outreach_resource_user.kunalgohire
+  value = outreach_user.import
 }

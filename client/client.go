@@ -2,6 +2,7 @@ package client
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -29,14 +30,14 @@ func init() {
 	Errors[422] = "Email has already been taken, StatusCode = 422"
 }
 
-func NewClient(client_id string, client_secret string, refresh_token string, acc_token string, redirect_url string) (*Client, error) {
+func NewClient(client_id string, client_secret string, refresh_token string, redirect_url string) (*Client, error) {
 	c := Client{
 		HTTPClient: &http.Client{Timeout: 10 * time.Second},
 	}
-	Token := os.Getenv("outreach_acc_token")
+	Token := os.Getenv("OUTREACH_ACCESS_TOKEN")
 	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2", nil)
 	if err != nil {
-		log.Println("[Token Error]: ", err)
+		log.Println("[Token Generation Error]: ", err)
 		return nil, fmt.Errorf("%v", err)
 	}
 	client := &http.Client{Timeout: 10 * time.Second}
@@ -70,11 +71,11 @@ func NewClient(client_id string, client_secret string, refresh_token string, acc
 			tok, _ := c.doRequest(req)
 			ar := AuthResp{}
 			json.Unmarshal(tok, &ar)
-			os.Setenv("outreach_acc_token", ar.AccToken)
-			os.Setenv("outreach_refresh_token", ar.RefreshToken)
+			os.Setenv("OUTREACH_ACCESS_TOKEN", ar.AccToken)
+			os.Setenv("OUTREACH_REFRESH_TOKEN", ar.RefreshToken)
 			Token = ar.AccToken
 	}
-	os.Setenv("outreach_acc_token", Token)
+	os.Setenv("OUTREACH_ACCESS_TOKEN", Token)
 	c.AccessToken = "Bearer " + Token
 	return &c, nil
 }
@@ -84,20 +85,21 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 	req.Header.Add("content-type", "application/json")
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		log.Println("[Do req Error]: ", err)
+		log.Println("[http request Error]: ", err)
 		return nil, fmt.Errorf("%v", err)
 	}
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Println("[Do req Error]: ", err)
+		log.Println("[http request Error]: ", err)
 		return nil, fmt.Errorf("%v", err)
 	}
 	if res.StatusCode == 400 || res.StatusCode == 401 || res.StatusCode == 429 || res.StatusCode == 422 || res.StatusCode == 404 {
-		log.Println("[Do req Error]: ", Errors[res.StatusCode])
-		return nil, fmt.Errorf("status of doreq: %s ", Errors[res.StatusCode])
+		log.Println(Errors[res.StatusCode])
+		err=errors.New(Errors[res.StatusCode])
+		return nil, err
 	}
-	return body, err
+	return body, nil
 }
 
 /*
@@ -174,7 +176,7 @@ func (c *Client) CreateUser(userCreateInfo Data) (*Data, error) {
 	body, err := c.doRequest(req)
 	if err != nil {
 		log.Println("[CreateUser Error]: ", err)
-		return nil, fmt.Errorf("%v", err)
+		return nil, fmt.Errorf("[Create User Error]:  %v", err)
 	}
 	user := Data{}
 	err = json.Unmarshal(body, &user)
@@ -199,7 +201,7 @@ func (c *Client) UpdateUser(UserId string, userUpdateInfo Data) (*Data, error) {
 	body, err := c.doRequest(req)
 	if err != nil {
 		log.Println("[UpdateUser Error]: ", err)
-		return nil, fmt.Errorf("%v", err)
+		return nil, fmt.Errorf("[Update User Error]:   %v", err)
 	}
 	user := Data{}
 	err = json.Unmarshal(body, &user)

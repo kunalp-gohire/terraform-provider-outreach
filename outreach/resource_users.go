@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"regexp"
 	"strconv"
+	"strings"
 	"terraform-provider-outreach/client"
 )
 
@@ -64,11 +65,11 @@ func resourceUser() *schema.Resource {
 		UpdateContext: resourceUserUpdate,
 		DeleteContext: resourceUserDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: resourceUserImporter,
 		},
 		/*
 			Below custom import function is implemented to import user using email id instead of
-			user ID. But email ID can be changed or update using UI. So can't use email ID 
+			user ID. But email ID can be changed or update using UI. So can't use email ID
 			as primary key.
 		*/
 		// Importer: &schema.ResourceImporter{
@@ -103,12 +104,11 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, m interface
 		Data: client.User{
 			Type: "user",
 			Attributes: client.Attributes{
-				Email:       d.Get("email").(string),
-				FirstName:   d.Get("firstname").(string),
-				LastName:    d.Get("lastname").(string),
-				Locked:      d.Get("locked").(bool),
-				PhoneNumber: d.Get("phonenumber").(string),
-				Title:       d.Get("title").(string),
+				Email:     d.Get("email").(string),
+				FirstName: d.Get("firstname").(string),
+				LastName:  d.Get("lastname").(string),
+				Locked:    d.Get("locked").(bool),
+				Title:     d.Get("title").(string),
 			},
 		},
 	}
@@ -134,6 +134,13 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	id := d.Id()
 	user, err := c.GetUserData(id)
 	if err != nil {
+		if strings.Contains(err.Error(), "User Does Not Exist , StatusCode = 404") {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Warning,
+				Summary:  "User Does Not Exist , StatusCode = 404",
+			})
+			return diags
+		}
 		return diag.FromErr(err)
 	}
 	d.Set("uid", user.Data.ID)
@@ -155,7 +162,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Can't update email",
-			Detail:   "Can't update email",
+			Detail:   "Can't update email through API",
 		})
 		return diags
 	}
@@ -169,12 +176,11 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 				Type: "user",
 				ID:   id,
 				Attributes: client.Attributes{
-					Email:       d.Get("email").(string),
-					FirstName:   d.Get("firstname").(string),
-					LastName:    d.Get("lastname").(string),
-					Locked:      d.Get("locked").(bool),
-					PhoneNumber: d.Get("phonenumber").(string),
-					Title:       d.Get("title").(string),
+					Email:     d.Get("email").(string),
+					FirstName: d.Get("firstname").(string),
+					LastName:  d.Get("lastname").(string),
+					Locked:    d.Get("locked").(bool),
+					Title:     d.Get("title").(string),
 				},
 			},
 		}
@@ -188,4 +194,24 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, m interface
 func resourceUserDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	d.SetId("")
 	return nil
+}
+
+func resourceUserImporter(ctx context.Context, d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	id := d.Id()
+	uid := fmt.Sprintf("%v", id)
+	c := m.(*client.Client)
+	user, err := c.GetUserData(uid)
+	if err != nil {
+		return nil, fmt.Errorf("%v ", err)
+	}
+	d.Set("uid", user.Data.ID)
+	d.Set("email", user.Data.Attributes.Email)
+	d.Set("firstname", user.Data.Attributes.FirstName)
+	d.Set("lastname", user.Data.Attributes.LastName)
+	d.Set("locked", user.Data.Attributes.Locked)
+	d.Set("username", user.Data.Attributes.UserName)
+	d.Set("title", user.Data.Attributes.Title)
+	d.Set("phonenumber", user.Data.Attributes.PhoneNumber)
+	d.SetId(uid)
+	return []*schema.ResourceData{d}, nil
 }

@@ -15,17 +15,17 @@ func TestAccUserDataSource_basic(t *testing.T) {
 			{
 				Config: testAccUserDataSourceConfig(),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					testAccCheckUserDataExists("data.outreach_users.test"),
+					testAccCheckUserDataExists("data.outreach_user.test"),
 					resource.TestCheckResourceAttr(
-						"data.outreach_users.test", "email", "kpgkunalgohire123@gmail.com"),
+						"data.outreach_user.test", "email", "kpgkunalgohire123@gmail.com"),
 					resource.TestCheckResourceAttr(
-						"data.outreach_users.test", "firstname", "User123"),
+						"data.outreach_user.test", "firstname", "User123"),
 					resource.TestCheckResourceAttr(
-						"data.outreach_users.test", "lastname", "Test123"),
+						"data.outreach_user.test", "lastname", "Test123"),
 					resource.TestCheckResourceAttr(
-						"data.outreach_users.test", "locked", "true"),
+						"data.outreach_user.test", "locked", "true"),
 					resource.TestCheckResourceAttr(
-						"data.outreach_users.test", "username", "User123_Test123"),
+						"data.outreach_user.test", "username", "User123_Test123"),
 				),
 			},
 		},
@@ -47,7 +47,7 @@ func testAccCheckUserDataExists(resource string) resource.TestCheckFunc {
 
 func testAccUserDataSourceConfig() string {
 	return fmt.Sprintf(`
-data "outreach_users" "test" {
+data "outreach_user" "test" {
 	id = 5
 }
 `)

@@ -13,33 +13,28 @@ func Provider() *schema.Provider {
 			"client_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("outreach_client_id", nil),
+				DefaultFunc: schema.EnvDefaultFunc("OUTREACH_CLIENT_ID", nil),
 			},
 			"client_secret": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("outreach_client_secrete", nil),
+				DefaultFunc: schema.EnvDefaultFunc("OUTREACH_CLIENT_SECRET", nil),
 			},
 			"refresh_token": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("outreach_refresh_token", nil),
+				DefaultFunc: schema.EnvDefaultFunc("OUTREACH_REFRESH_TOKEN", nil),
 			},
-			"acc_token": &schema.Schema{
+			"redirect_uri": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("outreach_acc_token", nil),
-			},
-			"redirect_url": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("outreach_redirect_url", nil),
+				DefaultFunc: schema.EnvDefaultFunc("OUTREACH_REDIRECT_URI", nil),
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"outreach_resource_user": resourceUser(),
+			"outreach_user": resourceUser(),
 		},
-		DataSourcesMap:       map[string]*schema.Resource{"outreach_users": dataSourceUsers()},
+		DataSourcesMap:       map[string]*schema.Resource{"outreach_user": dataSourceUsers()},
 		ConfigureContextFunc: providerConfigure,
 	}
 }
@@ -49,9 +44,8 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	client_id := d.Get("client_id").(string)
 	client_secret := d.Get("client_secret").(string)
 	refresh_token := d.Get("refresh_token").(string)
-	acc_token := d.Get("acc_token").(string)
-	redirect_url := d.Get("redirect_url").(string)
-	c, err := client.NewClient(client_id, client_secret, refresh_token, acc_token, redirect_url)
+	redirect_uri := d.Get("redirect_uri").(string)
+	c, err := client.NewClient(client_id, client_secret, refresh_token, redirect_uri)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,

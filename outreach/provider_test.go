@@ -25,7 +25,7 @@ func TestProvider_impl(t *testing.T) {
 }
 
 func testAccPreCheck(t *testing.T) {
-	if v := os.Getenv("acc_token"); v == "" {
-		t.Fatal("token must be set for acceptance tests")
+	if v := os.Getenv("OUTREACH_ACCESS_TOKEN"); v == "" {
+		t.Fatal("access token must be set for acceptance tests")
 	}
 }

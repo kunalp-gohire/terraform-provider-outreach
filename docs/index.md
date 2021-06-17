@@ -19,7 +19,7 @@ provider "outreach" {
 }
 
    ```
-Provide your credentials via the ,  `outreach_client_id`, `outreach_client_secrete `, `outreach_redirect_url` and `outreach_acc_token`  environment variables, representing your Outreach client ID, Outreach client secrete, Outreach application redirect URL and refresh token  respectively. For example,
+Provide your credentials via the ,  `OUTREACH_CLIENT_ID`, `OUTREACH_CLIENT_SECRET`, `OUTREACH_REDIRECT_URI` and `OUTREACH_REFRESH_TOKEN`  environment variables, representing your Outreach client ID, Outreach client secrete, Outreach application redirect URL and refresh token  respectively. For example,
 ```
 export outreach_acc_token ="[access token]"
 ```
@@ -36,21 +36,20 @@ terraform {
 }
 
 provider "outreach" {
-      client_id     = “[Outreach client ID]”
-      clinet_secret = “[Outreach client secrete]”
-      refresh_token = “[Outreach application redirect URL]”
-      redirect_url  = ”[refresh token]”
+      client_id     = "[Outreach client ID]"
+      clinet_secret = "[Outreach client secrete]"
+      refresh_token = "[Outreach application redirect URL]"
+      redirect_url  = "[refresh token]"
 }
 
    ```
 
 
 ## Schema
+
 ### Optional
-*  `client_id`          (string) - Outreach Client ID/ Application ID.
-*  `client_secret`   (string) - Outreach Client secret ID.
-*  `redirect_url`     (string) - Outreach Application redirect URL.
+*  `client_id`     (string) - Outreach Client ID/ Application ID.
+*  `client_secret` (string) - Outreach Client secret ID.
+*  `redirect_url`  (string) - Outreach Application redirect URL.
 *  `refresh_token` (string) - Refresh token.
-
-
 
