@@ -151,7 +151,7 @@ func (c *Client) GetUserData(UserId string) (*Data, error) {
 	body, err := c.doRequest(req)
 	if err != nil {
 		log.Println("[GetUser Error]: ", err)
-		return nil, err
+		return nil, fmt.Errorf("%v", err)
 	}
 	data := Data{}
 	err = json.Unmarshal(body, &data)
