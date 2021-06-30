@@ -67,9 +67,9 @@ func TestClient_CreateUser(t *testing.T) {
 				Data: User{
 					Type: "user",
 					Attributes: Attributes{
-						Email:       "kpgkunalgohire77@gmail.com",
-						FirstName:   "User77",
-						LastName:    "Test77",
+						Email:       "kpgkunalgohire7777@gmail.com",
+						FirstName:   "User7777",
+						LastName:    "Test7777",
 						Locked:      true,
 						Title:       "Test",
 					},
@@ -78,13 +78,13 @@ func TestClient_CreateUser(t *testing.T) {
 			expectedResp: &Data{
 				Data: User{
 					Type: "user",
-					ID:   20,
+					ID:   25,
 					Attributes: Attributes{
-						Email:       "kpgkunalgohire77@gmail.com",
-						FirstName:   "User77",
-						LastName:    "Test77",
+						Email:       "kpgkunalgohire7777@gmail.com",
+						FirstName:   "User7777",
+						LastName:    "Test7777",
 						Locked:      true,
-						UserName:    "User77_Test77",
+						UserName:    "User7777_Test7777",
 						PhoneNumber: "",
 						Title:       "Test",
 					},

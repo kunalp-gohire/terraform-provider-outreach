@@ -26,9 +26,9 @@ func TestAccUser_import_basic(t *testing.T) {
 func testAccCheckUserImporterBasic() string {
 	return fmt.Sprintf(`
 	resource "outreach_user" "import" {
-		email= "kpgkunalgohire188@gmail.com"
-		firstname="Test188"
-		lastname= "User188"
+		email= "kpgkunalgohire1888@gmail.com"
+		firstname="Test1888"
+		lastname= "User1888"
 		locked= true
 	}
 	`)

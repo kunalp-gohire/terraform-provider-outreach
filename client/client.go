@@ -50,30 +50,30 @@ func NewClient(client_id string, client_secret string, refresh_token string, red
 	}
 	defer re.Body.Close()
 	if re.StatusCode != 200 {
-			req_json := AuthStruct{
-				ClientID:      client_id,
-				ClientSecrete: client_secret,
-				RedirectURL:   redirect_url,
-				GrantType:     "refresh_token",
-				RefreshToken:  refresh_token,
-			}
-			rb,err := json.Marshal(req_json)
-			if err != nil {
-				log.Println("[Token Generation Error]: ", err)
-				return nil, fmt.Errorf("%v", err)
-			}
-			req, err := http.NewRequest("POST", "https://api.outreach.io/oauth/token", strings.NewReader(string(rb)))
-			if err != nil {
-				log.Println("[Token Generation Error]: ", err)
-				return nil, fmt.Errorf("%v", err)
-			}
-			req.Header.Add("content-type", "application/json")
-			tok, _ := c.doRequest(req)
-			ar := AuthResp{}
-			json.Unmarshal(tok, &ar)
-			os.Setenv("OUTREACH_ACCESS_TOKEN", ar.AccToken)
-			os.Setenv("OUTREACH_REFRESH_TOKEN", ar.RefreshToken)
-			Token = ar.AccToken
+		req_json := AuthStruct{
+			ClientID:      client_id,
+			ClientSecrete: client_secret,
+			RedirectURL:   redirect_url,
+			GrantType:     "refresh_token",
+			RefreshToken:  refresh_token,
+		}
+		rb, err := json.Marshal(req_json)
+		if err != nil {
+			log.Println("[Token Generation Error]: ", err)
+			return nil, fmt.Errorf("%v", err)
+		}
+		req, err := http.NewRequest("POST", "https://api.outreach.io/oauth/token", strings.NewReader(string(rb)))
+		if err != nil {
+			log.Println("[Token Generation Error]: ", err)
+			return nil, fmt.Errorf("%v", err)
+		}
+		req.Header.Add("content-type", "application/json")
+		tok, _ := c.doRequest(req)
+		ar := AuthResp{}
+		json.Unmarshal(tok, &ar)
+		os.Setenv("OUTREACH_ACCESS_TOKEN", ar.AccToken)
+		os.Setenv("OUTREACH_REFRESH_TOKEN", ar.RefreshToken)
+		Token = ar.AccToken
 	}
 	os.Setenv("OUTREACH_ACCESS_TOKEN", Token)
 	c.AccessToken = "Bearer " + Token
@@ -94,15 +94,16 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 		log.Println("[http request Error]: ", err)
 		return nil, fmt.Errorf("%v", err)
 	}
-	if res.StatusCode == 400 || res.StatusCode == 401 || res.StatusCode == 429 || res.StatusCode == 422 || res.StatusCode == 404 {
-		log.Println(Errors[res.StatusCode])
-		err=errors.New(Errors[res.StatusCode])
-		return nil, err
+	if res.StatusCode != http.StatusOK {
+		if res.StatusCode != 201 {
+			log.Println(Errors[res.StatusCode])
+			log.Println(string(body))
+			err = errors.New(Errors[res.StatusCode] + ".  Body:" + string(body))
+			return nil, err
+		}
 	}
 	return body, nil
 }
-
-
 
 func (c *Client) GetUserData(UserId string) (*Data, error) {
 	req, err := http.NewRequest("GET", "https://api.outreach.io/api/v2/users/"+UserId, nil)
@@ -176,7 +177,7 @@ func (c *Client) UpdateUser(UserId string, userUpdateInfo Data) (*Data, error) {
 
 func (c *Client) IsRetry(err error) bool {
 	if err != nil {
-		if strings.Contains(err.Error(), "User Has Sent Too Many Request, StatusCode = 429")==true {
+		if strings.Contains(err.Error(), "User Has Sent Too Many Request, StatusCode = 429.") == true {
 			return true
 		}
 	}
