@@ -69,33 +69,6 @@ func resourceUser() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: resourceUserImporter,
 		},
-		/*
-			Below custom import function is implemented to import user using email id instead of
-			user ID. But email ID can be changed or update using UI. So can't use email ID
-			as primary key.
-		*/
-		// Importer: &schema.ResourceImporter{
-		// 	State: func(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-		// 		email := d.Id()
-		// 		c := m.(*client.Client)
-		// 		user, err := c.GetDataSourceUser(email)
-		// 		if err != nil {
-		// 			return nil, fmt.Errorf("%v ", err)
-		// 		}
-		// 		d.Set("email", user.Attributes.Email)
-		// 		d.Set("firstname", user.Attributes.FirstName)
-		// 		d.Set("lastname", user.Attributes.LastName)
-		// 		d.Set("locked", user.Attributes.Locked)
-		// 		d.Set("username", user.Attributes.UserName)
-		// 		d.Set("title", user.Attributes.Title)
-		// 		d.Set("phonenumber", user.Attributes.PhoneNumber)
-		// 		d.Set("id", user.ID)
-		// 		UserId := user.ID
-		// 		uid := fmt.Sprintf("%v", UserId)
-		// 		d.SetId(uid)
-		// 		return []*schema.ResourceData{d}, nil
-		// 	},
-		// },
 	}
 }
 

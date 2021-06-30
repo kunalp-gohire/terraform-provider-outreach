@@ -168,22 +168,22 @@ output "user_instance" {
 
 ## Argument Reference
 
-* `email`       (Required,string) - The email id associated with the user account. Required for user creation.
-* `firstname`   (Required,string) - First name of the User. Required for user creation.
-* `lastname`    (Required,string) - Last Name / Family Name / Surname of the User. Required for user creation.
+* `email`       (Required, string) - The email id associated with the user account. Required for user creation.
+* `firstname`   (Required, string) - First name of the User. Required for user creation.
+* `lastname`    (Required, string) - Last Name / Family Name / Surname of the User. Required for user creation.
 * `locked`      (boolean)- User account status. Required for user creation. Default value is false. 
                            If it is not provided at the time of user creation, then the created user will be active. 
 * `phonenumber` (string) - Phone number of user. 
 * `title`       (string) - Job title of user in organization. 
 * `id`          (int)    - Server generated user ID. Required for fetch the user data using data block 
                            and import a user.                               
-* `client_id`     (Required,string) - Outreach Client ID/ Application ID. It can be set as environment 
+* `client_id`     (Required, string) - Outreach Client ID/ Application ID. It can be set as environment 
                                        variable `OUTREACH_CLIENT_ID`. 
-* `client_secret` (Required,string) - Outreach Client secret ID. It can be set as environment 
+* `client_secret` (Required, string) - Outreach Client secret ID. It can be set as environment 
                                        variable `OUTREACH_CLIENT_SECRET`.
-* `redirect_url`  (Required,string) - Outreach Application redirect URL. It can be set as environment 
+* `redirect_url`  (Required, string) - Outreach Application redirect URL. It can be set as environment 
                                        variable `OUTREACH_REDIRECT_URI`.
-* `refresh_token` (Required,string) - Refresh token. It can be set as environment variable 
+* `refresh_token` (Required, string) - Refresh token. It can be set as environment variable 
                                        `OUTREACH_REFRESH_TOKEN`.
 
 
