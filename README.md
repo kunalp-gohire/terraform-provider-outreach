@@ -106,16 +106,16 @@ Otherwise you can manually move the file from current directory to destination d
 ### Update the user
 1. Update the data of the user in the resource block and apply using `terraform apply`.
 2. First name, last name, locked status, and title can be updated.
-3. Email can't be updated through API. 
+3. Change the value of 'locked'  from `false` to `true` or vice versa in the resource block and run `terraform apply`.
+4. Email can't be updated through API. 
 
 ### Read the User Data
 1. Add data and output blocks as shown in [example usage](#example-usage) after that add id field  and user ID  and run `terraform plan` to read user data.
 
-### Lock/Unlock the user
-1. Change the value of ‘locked’  from `false` to `true` or vice versa in the resource block and run `terraform apply`.
 
 ### Delete the user
- :heavy_exclamation_mark:  [IMPORTANT] : Outreach doesn’t provide an API to delete users, instead of delete they suggest to lock the user. To delete user from state file follow below instructions:<br><br>
+*Outreach doesn’t provide an API to delete users, instead of delete they suggest to lock the user.*<br><br>
+To delete user from state file follow below instructions:<br><br>
 1. Delete or comment the resource block of the particular user and run `terraform apply`.
 
 ### Import a User Data
@@ -168,16 +168,23 @@ output "user_instance" {
 
 ## Argument Reference
 
-* `email`       (string) - The email id associated with the user account. Required for user creation.
-* `firstname`   (string) - First name of the User. Required for user creation.
-* `lastname`    (string) - Last Name / Family Name / Surname of the User. Required for user creation.
+* `email`       (Required,string) - The email id associated with the user account. Required for user creation.
+* `firstname`   (Required,string) - First name of the User. Required for user creation.
+* `lastname`    (Required,string) - Last Name / Family Name / Surname of the User. Required for user creation.
 * `locked`      (boolean)- User account status. Required for user creation. Default value is false. 
                            If it is not provided at the time of user creation, then the created user will be active. 
 * `phonenumber` (string) - Phone number of user. 
 * `title`       (string) - Job title of user in organization. 
 * `id`          (int)    - Server generated user ID. Required for fetch the user data using data block 
                            and import a user.                               
-
+* `client_id`     (Required,string) - Outreach Client ID/ Application ID. It can be set as environment 
+                                       variable `OUTREACH_CLIENT_ID`. 
+* `client_secret` (Required,string) - Outreach Client secret ID. It can be set as environment 
+                                       variable `OUTREACH_CLIENT_SECRET`.
+* `redirect_url`  (Required,string) - Outreach Application redirect URL. It can be set as environment 
+                                       variable `OUTREACH_REDIRECT_URI`.
+* `refresh_token` (Required,string) - Refresh token. It can be set as environment variable 
+                                       `OUTREACH_REFRESH_TOKEN`.
 
 
 
